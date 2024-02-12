@@ -1,4 +1,4 @@
-import { lib } from "./sdl2";
+import { image, lib } from "./sdl2";
 import { CString, type Pointer} from 'bun:ffi';
 
 export const SDL_INIT_TIMER           = 0x00000001;
@@ -59,6 +59,7 @@ export const SDL_QUIT = 0x100;
 
 export type SDL_Window = Pointer | null;
 export type SDL_Renderer = Pointer | null;
+export type SDL_Surface = Pointer | null;
 
 export const SDL_CreateWindow = (title: string, x: number, y: number, width: number, height: number, flags: number) : SDL_Window => lib.symbols.SDL_CreateWindow(Buffer.from(title), x, y, width, height, flags);
 export const SDL_Init = (flag: number) : number => lib.symbols.SDL_Init(flag);
@@ -72,3 +73,4 @@ export const SDL_RenderClear = (renderer: SDL_Renderer): number => lib.symbols.S
 export const SDL_RenderPresent = (renderer: SDL_Renderer): void => lib.symbols.SDL_RenderPresent(renderer);
 export const SDL_Delay = (ms: number): void => lib.symbols.SDL_Delay(ms);
 export const SDL_DestroyRenderer = (renderer: SDL_Renderer): void => lib.symbols.SDL_DestroyRenderer(renderer);
+export const IMG_Load = (path: string) : SDL_Surface => image.symbols.IMG_Load(Buffer.from(path));

@@ -2,6 +2,14 @@ import { dlopen, suffix } from 'bun:ffi';
 import { SDL_PollEvent } from '.';
 
 const path = `./lib/SDL2.${suffix}`;
+const imagepath = `./lib/SDL2image.${suffix}`
+
+export const image = dlopen(imagepath, {
+    IMG_Load: {
+        args: ["cstring"],
+        returns: "pointer"
+    }
+})
 
 export const lib = dlopen(path, {
     SDL_Init: {
@@ -61,3 +69,4 @@ export const lib = dlopen(path, {
         returns: "void"
     }
 })
+

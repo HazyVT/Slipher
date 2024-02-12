@@ -31,9 +31,9 @@ function handleEvents() {
         events.forEach((event) => {
             if (event == SDL_QUIT) {
                 isRunning = false;
-            }
+            };
         })
-    }
+    };
 }
 
 function clean() {
