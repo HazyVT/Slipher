@@ -55,6 +55,8 @@ export const SDL_LOG_PRIORITY_ERROR = 5;
 export const SDL_LOG_PRIORITY_CRITICAL = 6;
 export const SDL_NUM_LOG_PRIORITIES = 7;
 
+export const SDL_QUIT = 0x100;
+
 export type SDL_Window = Pointer | null;
 export type SDL_Renderer = Pointer | null;
 
@@ -63,9 +65,10 @@ export const SDL_Init = (flag: number) : number => lib.symbols.SDL_Init(flag);
 export const SDL_GetWindowSurface = (window: SDL_Window) => lib.symbols.SDL_GetWindowSurface(window);
 export const SDL_DestroyWindow = (window: SDL_Window) => lib.symbols.SDL_DestroyWindow(window);
 export const SDL_Quit = () : void => lib.symbols.SDL_Quit();
-export const SDL_PollEvent = (event: Pointer | NodeJS.TypedArray | CString | null) => lib.symbols.SDL_PollEvent(event);
+export const SDL_PollEvent = (event: Pointer) => lib.symbols.SDL_PollEvent(event);
 export const SDL_CreateRenderer = (window: SDL_Window, index: number, flags: number): SDL_Renderer => lib.symbols.SDL_CreateRenderer(window, index, flags);
 export const SDL_SetRenderDrawColor = (renderer: SDL_Renderer, red: number, green: number, blue: number, alpha: number): number => lib.symbols.SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
 export const SDL_RenderClear = (renderer: SDL_Renderer): number => lib.symbols.SDL_RenderClear(renderer);
 export const SDL_RenderPresent = (renderer: SDL_Renderer): void => lib.symbols.SDL_RenderPresent(renderer);
 export const SDL_Delay = (ms: number): void => lib.symbols.SDL_Delay(ms);
+export const SDL_DestroyRenderer = (renderer: SDL_Renderer): void => lib.symbols.SDL_DestroyRenderer(renderer);

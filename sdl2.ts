@@ -55,5 +55,9 @@ export const lib = dlopen(path, {
     SDL_Delay: {
         args: ["uint32_t"],
         returns: "void"
+    },
+    SDL_DestroyRenderer: {
+        args: ["pointer"],
+        returns: "void"
     }
 })
