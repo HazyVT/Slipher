@@ -1,4 +1,4 @@
-import { image, lib } from "./sdl2";
+import { image, lib } from "./src/sdl2";
 import { type Pointer, ptr} from 'bun:ffi';
 
 export const SDL_INIT_TIMER           = 0x00000001;
@@ -94,6 +94,7 @@ export class SDL_Event {
     }
 }
 
+
 class EvClass {
     public type;
     public value;
@@ -160,8 +161,13 @@ class Graphics {
         return new drawable(img, texture);
     }
 
-    static draw(drawable: drawable) : void {
-        SDL_RenderCopy(this.renderer, drawable.texture, null, null);
+    static draw(drawable: drawable, x: number, y: number, width: number, height: number) : void {
+        const destsrc = new Uint32Array(4);
+        destsrc[0] = x;
+        destsrc[1] = y;
+        destsrc[2] = width;
+        destsrc[3] = height;
+        SDL_RenderCopy(this.renderer, drawable.texture, null, ptr(destsrc))
         SDL_RenderPresent(this.renderer);
     }
 }
