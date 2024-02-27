@@ -1,15 +1,8 @@
 import { dlopen, suffix } from 'bun:ffi';
-import { SDL_PollEvent } from '.';
 
-const path = `./lib/SDL2.${suffix}`;
-const imagepath = `./lib/SDL2image.${suffix}`
+const path = `./lib/libSDL2.${suffix}`;
+const imagepath = `./libSDL2_image.${suffix}`;
 
-export const image = dlopen(imagepath, {
-    IMG_Load: {
-        args: ["cstring"],
-        returns: "pointer"
-    }
-})
 
 export const lib = dlopen(path, {
     SDL_Init: {
@@ -67,6 +60,21 @@ export const lib = dlopen(path, {
     SDL_DestroyRenderer: {
         args: ["pointer"],
         returns: "void"
+    },
+    SDL_LoadBMP_RW: {
+        args: ["cstring"],
+        returns: "pointer"
+    },
+    SDL_CreateTextureFromSurface: {
+        args: ["pointer", "pointer"],
+        returns: "pointer"
+    },
+    SDL_RenderCopy: {
+        args: ["pointer", "pointer", "pointer", "pointer"],
+        returns: "int"
+    },
+    SDL_GetError: {
+        args: [],
+        returns: "cstring"
     }
 })
-

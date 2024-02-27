@@ -1,4 +1,4 @@
-import { SDL_CreateRenderer, SDL_CreateWindow, SDL_Delay, SDL_GetWindowSurface, SDL_INIT_EVERYTHING, SDL_INIT_VIDEO, SDL_Init, SDL_PollEvent, SDL_RenderClear, SDL_RenderPresent, SDL_SetRenderDrawColor, SDL_WINDOW_FULLSCREEN, SDL_WINDOW_SHOWN, type SDL_Renderer, type SDL_Window, SDL_Quit, SDL_QUIT, SDL_DestroyWindow, SDL_DestroyRenderer } from ".";
+import { SDL_CreateRenderer, SDL_CreateWindow, SDL_Delay, SDL_GetWindowSurface, SDL_INIT_EVERYTHING, SDL_INIT_VIDEO, SDL_Init, SDL_PollEvent, SDL_RenderClear, SDL_RenderPresent, SDL_SetRenderDrawColor, SDL_WINDOW_FULLSCREEN, SDL_WINDOW_SHOWN, type SDL_Renderer, type SDL_Window, SDL_Quit, SDL_QUIT, SDL_DestroyWindow, SDL_DestroyRenderer, SDL_Event, SDLK_ESCAPE, SDL_KEYDOWN } from ".";
 import { type Pointer, read, ptr } from 'bun:ffi'
 
 let isRunning: boolean = false;
@@ -19,21 +19,23 @@ function init() {
 
     window = SDL_CreateWindow("Hello World!", 320, 240, 640, 480, flags);
     renderer = SDL_CreateRenderer(window, -1, 0);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 70, 130, 170, 255);
 
     isRunning = true;
 }
 
 function handleEvents() {
-    const events = new Uint32Array(32);
-    const eventptr = ptr(events);
-    while (SDL_PollEvent(eventptr)) {
-        events.forEach((event) => {
-            if (event == SDL_QUIT) {
+    const event = new SDL_Event();
+    SDL_PollEvent(event);
+    event.event.forEach((type, _index, arr) => {
+        if (type == SDL_QUIT) isRunning = false;
+        else if (type == SDL_KEYDOWN) {
+            const key = arr[5];
+            if (key == SDLK_ESCAPE) {
                 isRunning = false;
-            };
-        })
-    };
+            }
+        }
+    })
 }
 
 function clean() {
