@@ -1,7 +1,7 @@
 import { dlopen, suffix } from 'bun:ffi';
 
 const path = `./lib/libSDL2.${suffix}`;
-const imagepath = `./libSDL2_image.${suffix}`;
+const imagepath = `./lib/libSDL2_image-2.0.0.${suffix}`;
 
 
 export const lib = dlopen(path, {
@@ -76,5 +76,12 @@ export const lib = dlopen(path, {
     SDL_GetError: {
         args: [],
         returns: "cstring"
+    }
+})
+
+export const image = dlopen(imagepath, {
+    IMG_Init:{ 
+        args: [],
+        returns: "void"
     }
 })
