@@ -76,6 +76,14 @@ export const lib = dlopen(path, {
     SDL_GetError: {
         args: [],
         returns: "cstring"
+    },
+    SDL_SetWindowIcon: {
+        args: ["pointer", "pointer"],
+        returns: "void"
+    },
+    SDL_SetWindowFullscreen: {
+        args: ["pointer", "int"],
+        returns: "int"
     }
 })
 

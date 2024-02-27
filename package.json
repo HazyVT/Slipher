@@ -7,5 +7,10 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "make_out_dir" : "mkdir out && cd out && mkdir lib && mkdir assets",
+    "init_build" : "bun run make_out_dir && cp ./lib/* ./out/lib && cp ./assets/* ./out/assets",
+    "build" : "bun run init_build && bun build src/test.ts --compile --outfile ./out/main"
   }
 }

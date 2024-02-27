@@ -121,6 +121,8 @@ export const SDL_LoadBMP = (path: string) : SDL_Surface => lib.symbols.SDL_LoadB
 export const SDL_CreateTextureFromSurface = (renderer: SDL_Renderer, surface: SDL_Surface) : SDL_Texture => lib.symbols.SDL_CreateTextureFromSurface(renderer, surface);
 export const SDL_RenderCopy = (renderer: SDL_Renderer, texture: SDL_Texture, srcrect: SDL_Rect, dstrect: SDL_Rect) : number => lib.symbols.SDL_RenderCopy(renderer, texture, srcrect, dstrect);
 export const SDL_GetError = () : String => lib.symbols.SDL_GetError();
+const SDL_SetWindowIcon = (window: SDL_Window, surface: SDL_Surface) : void => lib.symbols.SDL_SetWindowIcon(window, surface); 
+const SDL_SetWindowFullscreen = (window: SDL_Window, flags: number) : number => lib.symbols.SDL_SetWindowFullscreen(window, flags);
 
 export const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
 export const IMG_Quit = () : void => image.symbols.IMG_Quit();
@@ -146,18 +148,9 @@ class Event {
 
 class Graphics {
 
-    private static window: SDL_Window;
-    private static renderer: SDL_Renderer;
-
-    static set_mode(width: number, height: number) : SDL_Window {
-        this.window = SDL_CreateWindow("Tygame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
-        this.renderer = SDL_CreateRenderer(this.window, -1, 0);
-        return this.window;
-    }
-
-    static new_image(path: string) {
+    static newImage(path: string) {
         const img = IMG_Load(path);
-        const texture = SDL_CreateTextureFromSurface(this.renderer, img);
+        const texture = SDL_CreateTextureFromSurface(Wave.rendererPointer, img);
         return new drawable(img, texture);
     }
 
@@ -167,15 +160,43 @@ class Graphics {
         destsrc[1] = y;
         destsrc[2] = width;
         destsrc[3] = height;
-        SDL_RenderCopy(this.renderer, drawable.texture, null, ptr(destsrc))
-        SDL_RenderPresent(this.renderer);
+        SDL_RenderCopy(Wave.rendererPointer, drawable.texture, null, ptr(destsrc))
+        SDL_RenderPresent(Wave.rendererPointer);
+    }
+
+    static clear() {
+        SDL_RenderClear(Wave.rendererPointer);
+    }   
+}
+
+class Window {
+    private pointer;
+
+    constructor(pointer : SDL_Window) {
+        this.pointer = pointer;
+    }
+
+    getPointer() : SDL_Window {
+        return this.pointer;
+    }
+
+    setWindowIcon(path: string) {
+        const icon = IMG_Load(path);
+        SDL_SetWindowIcon(this.pointer, icon);
+    }
+
+    setWindowFullscreen(flag: boolean) {
+        SDL_SetWindowFullscreen(this.pointer, flag ? SDL_WINDOW_FULLSCREEN : 0);
     }
 }
 
-export class Tygame {
+export class Wave {
 
     public static event = Event;
     public static graphics = Graphics;
+
+    public static windowPointer : SDL_Window;
+    public static rendererPointer : SDL_Renderer;
 
     public static QUIT = SDL_QUIT;
     public static KEYDOWN = SDL_KEYDOWN;
@@ -426,5 +447,11 @@ export class Tygame {
     public static quit() {
         IMG_Quit();
         SDL_Quit();
+    }
+
+    public static createWindow(width: number, height: number) {
+        this.windowPointer = SDL_CreateWindow("Tygame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+        this.rendererPointer = SDL_CreateRenderer(this.windowPointer, -1, 0);
+        return new Window(this.windowPointer);
     }
 }

@@ -1,28 +1,38 @@
-import {SDL_GetError, Tygame} from '../index';
+import { Wave } from '../index';
 
-Tygame.init();
-const screen = Tygame.graphics.set_mode(640, 480);
+Wave.init();
+const screen = Wave.createWindow(1280, 720);
+screen.setWindowIcon("./assets/butterfly.png")
 let running = true;
 
-const image = Tygame.graphics.new_image("./assets/test.png");
+let x = 0, y = 0;
+
+const image = Wave.graphics.newImage("./assets/test.png");
 
 while (running) {
-   const event = Tygame.event.get();
+   const event = Wave.event.get();
 
-   Tygame.graphics.draw(image, 0, 0, 256, 256);
+   Wave.graphics.clear();
+   Wave.graphics.draw(image, x, y, 256, 256);
 
    switch (event.type) {
-    case Tygame.QUIT:
+    case Wave.QUIT:
         running = false;
         break;
-    case Tygame.KEYDOWN:
-        if (event.value == Tygame.K_ESCAPE) {
-            running = false;
-        } else {
-            console.log(String.fromCharCode(event.value));
+    case Wave.KEYDOWN:
+        switch (event.value) {
+            case Wave.K_ESCAPE:
+                running = false;
+                break;
+            case Wave.K_d:
+                x += 4;
+                break;
+            case Wave.K_a:
+                x -= 4;
+                break;
         }
         break;
    }
 }
 
-Tygame.quit();
+Wave.quit();
