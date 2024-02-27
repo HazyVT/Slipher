@@ -84,6 +84,14 @@ export const lib = dlopen(path, {
     SDL_SetWindowFullscreen: {
         args: ["pointer", "int"],
         returns: "int"
+    },
+    SDL_GetPerformanceCounter: {
+        args: [],
+        returns: "int"
+    },
+    SDL_GetPerformanceFrequency: {
+        args: [],
+        returns: "int"
     }
 })
 

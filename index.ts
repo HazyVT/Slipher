@@ -123,6 +123,8 @@ export const SDL_RenderCopy = (renderer: SDL_Renderer, texture: SDL_Texture, src
 export const SDL_GetError = () : String => lib.symbols.SDL_GetError();
 const SDL_SetWindowIcon = (window: SDL_Window, surface: SDL_Surface) : void => lib.symbols.SDL_SetWindowIcon(window, surface); 
 const SDL_SetWindowFullscreen = (window: SDL_Window, flags: number) : number => lib.symbols.SDL_SetWindowFullscreen(window, flags);
+const SDL_GetPerformanceCounter = () : number => lib.symbols.SDL_GetPerformanceCounter();
+const SDL_GetPerformanceFrequency = () : number => lib.symbols.SDL_GetPerformanceFrequency();
 
 export const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
 export const IMG_Quit = () : void => image.symbols.IMG_Quit();
@@ -138,10 +140,25 @@ class drawable {
     }
 }
 
+class Clock {
+    private static dt : number = 0;
+    private static last = 0;
+    private static now = SDL_GetPerformanceCounter();
+
+    static tick() {
+        this.last = this.now;
+        this.now = SDL_GetPerformanceCounter();
+     
+        this.dt = ((this.now - this.last)) / SDL_GetPerformanceFrequency();
+        return this.dt;
+    }
+}
+
 class Event {
     static get() : EvClass {
         const event = new SDL_Event();
         SDL_PollEvent(event);
+        console.log("running");
         return new EvClass(event.event[0], event.event[5]);
     }
 }
@@ -194,6 +211,7 @@ export class Wave {
 
     public static event = Event;
     public static graphics = Graphics;
+    public static clock = Clock;
 
     public static windowPointer : SDL_Window;
     public static rendererPointer : SDL_Renderer;
