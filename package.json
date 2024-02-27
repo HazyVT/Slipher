@@ -1,5 +1,5 @@
 {
-  "name": "bunsdl2",
+  "name": "wave",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
