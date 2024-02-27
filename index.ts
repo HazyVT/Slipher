@@ -1,4 +1,4 @@
-import { lib } from "./sdl2";
+import { image, lib } from "./sdl2";
 import { type Pointer, ptr} from 'bun:ffi';
 
 export const SDL_INIT_TIMER           = 0x00000001;
@@ -63,6 +63,12 @@ export const SDL_WINDOWPOS_UNDEFINED = 0x1FFF0000;
 export const SDL_KEYDOWN = 0x300
 export const SDL_KEYUP = 0x301
 
+enum image_type {
+    IMG_INIT_JPG = 0x00000001,
+    IMG_INIT_PNG = 0x00000002,
+    IMG_INIT_TIF = 0x00000004
+}
+
 /* SDL Types */
 
 export type SDL_Window = Pointer | null;
@@ -87,7 +93,6 @@ export class SDL_Event {
         return this.pointer;
     }
 }
-
 
 class EvClass {
     public type;
@@ -116,10 +121,17 @@ export const SDL_CreateTextureFromSurface = (renderer: SDL_Renderer, surface: SD
 export const SDL_RenderCopy = (renderer: SDL_Renderer, texture: SDL_Texture, srcrect: SDL_Rect, dstrect: SDL_Rect) : number => lib.symbols.SDL_RenderCopy(renderer, texture, srcrect, dstrect);
 export const SDL_GetError = () : String => lib.symbols.SDL_GetError();
 
-class Display {
-    static set_mode(width: number, height: number) {
-        const window = SDL_CreateWindow("Tygame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
-        return window;
+export const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
+export const IMG_Quit = () : void => image.symbols.IMG_Quit();
+export const IMG_Load = (path: string) : SDL_Surface => image.symbols.IMG_Load(Buffer.from(path));
+
+class drawable {
+    image: SDL_Surface
+    texture: SDL_Texture
+
+    constructor(image: SDL_Surface, texture: SDL_Texture) {
+        this.image = image;
+        this.texture = texture;
     }
 }
 
@@ -131,10 +143,33 @@ class Event {
     }
 }
 
+class Graphics {
+
+    private static window: SDL_Window;
+    private static renderer: SDL_Renderer;
+
+    static set_mode(width: number, height: number) : SDL_Window {
+        this.window = SDL_CreateWindow("Tygame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+        this.renderer = SDL_CreateRenderer(this.window, -1, 0);
+        return this.window;
+    }
+
+    static new_image(path: string) {
+        const img = IMG_Load(path);
+        const texture = SDL_CreateTextureFromSurface(this.renderer, img);
+        return new drawable(img, texture);
+    }
+
+    static draw(drawable: drawable) : void {
+        SDL_RenderCopy(this.renderer, drawable.texture, null, null);
+        SDL_RenderPresent(this.renderer);
+    }
+}
+
 export class Tygame {
 
-    public static display = Display;
     public static event = Event;
+    public static graphics = Graphics;
 
     public static QUIT = SDL_QUIT;
     public static KEYDOWN = SDL_KEYDOWN;
@@ -379,5 +414,11 @@ export class Tygame {
 
     public static init() {
         SDL_Init(SDL_INIT_EVERYTHING);
+        IMG_Init(image_type.IMG_INIT_JPG + image_type.IMG_INIT_PNG);
+    }
+
+    public static quit() {
+        IMG_Quit();
+        SDL_Quit();
     }
 }

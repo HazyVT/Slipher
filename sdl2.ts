@@ -80,8 +80,16 @@ export const lib = dlopen(path, {
 })
 
 export const image = dlopen(imagepath, {
-    IMG_Init:{ 
+    IMG_Init: { 
+        args: ["int"],
+        returns: "int"
+    },
+    IMG_Quit: {
         args: [],
         returns: "void"
+    },
+    IMG_Load: {
+        args: ["cstring"],
+        returns: "pointer"
     }
 })

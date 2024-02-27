@@ -1,11 +1,16 @@
 import {SDL_GetError, Tygame} from './index';
 
 Tygame.init();
-const screen = Tygame.display.set_mode(640, 480);
+const screen = Tygame.graphics.set_mode(640, 480);
 let running = true;
+
+const image = Tygame.graphics.new_image("./assets/test.png");
 
 while (running) {
    const event = Tygame.event.get();
+
+   Tygame.graphics.draw(image);
+
    switch (event.type) {
     case Tygame.QUIT:
         running = false;
@@ -19,3 +24,5 @@ while (running) {
         break;
    }
 }
+
+Tygame.quit();
