@@ -2,7 +2,7 @@ import { Wave, Animation } from '../index';
 
 let screen;
 let running = false;
-let x = 0, y = 0;
+let x = 40, y = 40;
 
 let action = 'idle';
 let flip = false;
@@ -21,15 +21,16 @@ const change_action = (action: string, new_action: string) => {
 function load() {
     Wave.init();
     screen = Wave.createWindow(1280, 720);
-    screen.setWindowIcon("./assets/butterfly.png")
+    screen.setWindowIcon(import.meta.dir + "/assets/butterfly.png")
+    idleAnim = Wave.graphics.loadAnimation(import.meta.dir + "/assets/idle", 0.3, 8);
+    walkAnim = Wave.graphics.loadAnimation(import.meta.dir + "/assets/walk", 0.3, 8);
     running = true;
-    idleAnim = Wave.graphics.loadAnimation("./assets/idle", 120, 8);
-    walkAnim = Wave.graphics.loadAnimation("./assets/walk", 120, 8);
 }
 
 function update() {
     const event = Wave.event.get();
     const dt = Wave.clock.tick();
+
 
     switch (event.type) {
         case Wave.QUIT:

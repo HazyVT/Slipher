@@ -100,22 +100,22 @@ class EvClass {
     } 
 }
 
-export const SDL_CreateWindow = (title: string, x: number, y: number, width: number, height: number, flags: number) : SDL_Window => lib.symbols.SDL_CreateWindow(Buffer.from(title), x, y, width, height, flags);
-export const SDL_Init = (flag: number) : number => lib.symbols.SDL_Init(flag);
-export const SDL_GetWindowSurface = (window: SDL_Window) => lib.symbols.SDL_GetWindowSurface(window);
-export const SDL_DestroyWindow = (window: SDL_Window) => lib.symbols.SDL_DestroyWindow(window);
-export const SDL_Quit = () : void => lib.symbols.SDL_Quit();
-export const SDL_PollEvent = (event: SDL_Event) => lib.symbols.SDL_PollEvent(event.getPointer());
-export const SDL_CreateRenderer = (window: SDL_Window, index: number, flags: number): SDL_Renderer => lib.symbols.SDL_CreateRenderer(window, index, flags);
-export const SDL_SetRenderDrawColor = (renderer: SDL_Renderer, red: number, green: number, blue: number, alpha: number): number => lib.symbols.SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
-export const SDL_RenderClear = (renderer: SDL_Renderer): number => lib.symbols.SDL_RenderClear(renderer);
-export const SDL_RenderPresent = (renderer: SDL_Renderer): void => lib.symbols.SDL_RenderPresent(renderer);
-export const SDL_Delay = (ms: number): void => lib.symbols.SDL_Delay(ms);
-export const SDL_DestroyRenderer = (renderer: SDL_Renderer): void => lib.symbols.SDL_DestroyRenderer(renderer);
-export const SDL_LoadBMP = (path: string) : SDL_Surface => lib.symbols.SDL_LoadBMP_RW(Buffer.from(path));
-export const SDL_CreateTextureFromSurface = (renderer: SDL_Renderer, surface: SDL_Surface) : SDL_Texture => lib.symbols.SDL_CreateTextureFromSurface(renderer, surface);
-export const SDL_RenderCopy = (renderer: SDL_Renderer, texture: SDL_Texture, srcrect: SDL_Rect, dstrect: SDL_Rect) : number => lib.symbols.SDL_RenderCopy(renderer, texture, srcrect, dstrect);
-export const SDL_GetError = () : String => lib.symbols.SDL_GetError();
+const SDL_CreateWindow = (title: string, x: number, y: number, width: number, height: number, flags: number) : SDL_Window => lib.symbols.SDL_CreateWindow(Buffer.from(title), x, y, width, height, flags);
+const SDL_Init = (flag: number) : number => lib.symbols.SDL_Init(flag);
+const SDL_GetWindowSurface = (window: SDL_Window) => lib.symbols.SDL_GetWindowSurface(window);
+const SDL_DestroyWindow = (window: SDL_Window) => lib.symbols.SDL_DestroyWindow(window);
+const SDL_Quit = () : void => lib.symbols.SDL_Quit();
+const SDL_PollEvent = (event: SDL_Event) => lib.symbols.SDL_PollEvent(event.getPointer());
+const SDL_CreateRenderer = (window: SDL_Window, index: number, flags: number): SDL_Renderer => lib.symbols.SDL_CreateRenderer(window, index, flags);
+const SDL_SetRenderDrawColor = (renderer: SDL_Renderer, red: number, green: number, blue: number, alpha: number): number => lib.symbols.SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
+const SDL_RenderClear = (renderer: SDL_Renderer): number => lib.symbols.SDL_RenderClear(renderer);
+const SDL_RenderPresent = (renderer: SDL_Renderer): void => lib.symbols.SDL_RenderPresent(renderer);
+const SDL_Delay = (ms: number): void => lib.symbols.SDL_Delay(ms);
+const SDL_DestroyRenderer = (renderer: SDL_Renderer): void => lib.symbols.SDL_DestroyRenderer(renderer);
+const SDL_LoadBMP = (path: string) : SDL_Surface => lib.symbols.SDL_LoadBMP_RW(Buffer.from(path));
+const SDL_CreateTextureFromSurface = (renderer: SDL_Renderer, surface: SDL_Surface) : SDL_Texture => lib.symbols.SDL_CreateTextureFromSurface(renderer, surface);
+const SDL_RenderCopy = (renderer: SDL_Renderer, texture: SDL_Texture, srcrect: SDL_Rect, dstrect: SDL_Rect) : number => lib.symbols.SDL_RenderCopy(renderer, texture, srcrect, dstrect);
+const SDL_GetError = () : String => lib.symbols.SDL_GetError();
 const SDL_SetWindowIcon = (window: SDL_Window, surface: SDL_Surface) : void => lib.symbols.SDL_SetWindowIcon(window, surface); 
 const SDL_SetWindowFullscreen = (window: SDL_Window, flags: number) : number => lib.symbols.SDL_SetWindowFullscreen(window, flags);
 const SDL_GetPerformanceCounter = () : number => lib.symbols.SDL_GetPerformanceCounter();
@@ -166,7 +166,9 @@ export class Animation {
         destsrc[2] = width;
         destsrc[3] = height;
         const drawable = this.images.get(this.data[this.frame]);
-        SDL_RenderCopyEx(Wave.rendererPointer, drawable!.texture, null, ptr(destsrc), r, null, f);
+        if (drawable != null) {
+            SDL_RenderCopyEx(Wave.rendererPointer, drawable!.texture, null, ptr(destsrc), r, null, f);
+        }
 
     }
 }
@@ -197,10 +199,16 @@ class Graphics {
 
     static newImage(path: string) {
         const img = IMG_Load(path);
+        const texture = SDL_CreateTextureFromSurface(Wave.rendererPointer, img);
         const path_split = path.split('/');
         const t = path_split[path_split.length - 1].replace(".png", "");
-        const texture = SDL_CreateTextureFromSurface(Wave.rendererPointer, img);
-        return new drawable(t, img, texture);
+
+        if (img != null && texture != null) {    
+            return new drawable(t, img, texture);
+        }
+
+        console.error("Failed to load image " + t);
+        return null;
     }
 
     static draw(drawable: drawable, x: number, y: number, width: number, height: number, rotate?: number, flip?: boolean) : void {
@@ -242,20 +250,23 @@ class Graphics {
     }
     
     static loadAnimation(path: string, frame_duration: number, frames: number) : Animation {
-        const animation_frames = new Map<string, drawable>();;
+        const animation_frames = new Map<string, drawable>();
         const animation_frame_data = [];
         const split_path = path.split('/');
         const animation_name = split_path[split_path.length - 1];
         for (let n = 0; n < frames; n++) {
             const animation_frame_id = animation_name + "_" + n.toString();
-            const image_loc = path + '/' + animation_frame_id + ".png";
+            let image_loc = path + `/` + animation_frame_id + ".png";
+            image_loc = image_loc.replace('\\', '/');
             const image = Wave.graphics.newImage(image_loc);
-            animation_frames.set(image.name, image);
-            for (let i = 0; i < frame_duration; i++) {
-                animation_frame_data.push(animation_frame_id);
+            if (image != null) {
+                animation_frames.set(image.name, image);
+                const dt = Wave.clock.tick();
+                for (let i = 0; i < frame_duration / dt; i++) {
+                    animation_frame_data.push(animation_frame_id);
+                }
             }
         }
-
         return new Animation(animation_frames, animation_frame_data);
     }
 }
@@ -532,8 +543,8 @@ export class Wave {
     public static K_SLEEP = 1073742106
 
     public static init() {
-        SDL_Init(SDL_INIT_EVERYTHING);
-        IMG_Init(image_type.IMG_INIT_JPG + image_type.IMG_INIT_PNG);
+        const init = SDL_Init(SDL_INIT_EVERYTHING);
+        const img_init = IMG_Init(image_type.IMG_INIT_PNG + image_type.IMG_INIT_JPG);
     }
 
     public static quit() {
