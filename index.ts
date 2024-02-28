@@ -1,67 +1,61 @@
 import { image, lib } from "./src/sdl2";
 import { type Pointer, ptr} from 'bun:ffi';
 
-export const SDL_INIT_TIMER           = 0x00000001;
-export const SDL_INIT_AUDIO           = 0x00000010;
-export const SDL_INIT_VIDEO           = 0x00000020;
-export const SDL_INIT_JOYSTICK        = 0x00000200;
-export const SDL_INIT_HAPTIC          = 0x00001000;
-export const SDL_INIT_GAMECONTROLLER  = 0x00002000;
-export const SDL_INIT_NOPARACHUTE     = 0x00100000;
-export const SDL_INIT_EVERYTHING      = 0x0000FFFF;
-
-export const SDL_HINT_FRAMEBUFFER_ACCELERATION    = "SDL_FRAMEBUFFER_ACCELERATION";
-export const SDL_HINT_RENDER_DRIVER               = "SDL_RENDER_DRIVER";
-export const SDL_HINT_RENDER_OPENGL_SHADERS       = "SDL_RENDER_OPENGL_SHADERS";
-export const SDL_HINT_RENDER_SCALE_QUALITY        = "SDL_RENDER_SCALE_QUALITY";
-export const SDL_HINT_RENDER_VSYNC                = "SDL_RENDER_VSYNC";
-export const SDL_HINT_VIDEO_X11_XVIDMODE          = "SDL_VIDEO_X11_XVIDMODE";
-export const SDL_HINT_VIDEO_X11_XINERAMA          = "SDL_VIDEO_X11_XINERAMA";
-export const SDL_HINT_VIDEO_X11_XRANDR            = "SDL_VIDEO_X11_XRANDR";
-export const SDL_HINT_GRAB_KEYBOARD               = "SDL_GRAB_KEYBOARD";
-export const SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS    = "SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS";
-export const SDL_HINT_IDLE_TIMER_DISABLED  = "SDL_IOS_IDLE_TIMER_DISABLED";
-export const SDL_HINT_ORIENTATIONS  = "SDL_IOS_ORIENTATIONS";
-export const SDL_HINT_GAMECONTROLLERCONFIG  = "SDL_GAMECONTROLLERCONFIG";
-export const SDL_HINT_ALLOW_TOPMOST  = "SDL_ALLOW_TOPMOST";
-export const SDL_HINT_DEFAULT = 1;
-export const SDL_HINT_NORMAL = 2;
-export const SDL_HINT_OVERRIDE = 3;
-
-export const SDL_WINDOW_FULLSCREEN = 0x00000001;
-export const SDL_WINDOW_OPENGL = 0x00000002;
-export const SDL_WINDOW_SHOWN = 0x00000004;
-export const SDL_WINDOW_HIDDEN = 0x00000008;
-export const SDL_WINDOW_BORDERLESS = 0x00000010;
-export const SDL_WINDOW_RESIZABLE = 0x00000020;
-export const SDL_WINDOW_MINIMIZED = 0x00000040;
-export const SDL_WINDOW_MAXIMIZED = 0x00000080;
-export const SDL_WINDOW_INPUT_GRABBED = 0x00000100;
-export const SDL_WINDOW_INPUT_FOCUS = 0x00000200;
-export const SDL_WINDOW_MOUSE_FOCUS = 0x00000400;
-export const SDL_WINDOW_FULLSCREEN_DESKTOP = (  0x00000001 | 0x00001000 );
-export const SDL_WINDOW_FOREIGN = 0x00000800;
-
-export const SDL_RENDERER_SOFTWARE = 0x00000001;
-export const SDL_RENDERER_ACCELERATED = 0x00000002;
-export const SDL_RENDERER_PRESENTVSYNC = 0x00000004;
-export const SDL_RENDERER_TARGETTEXTURE = 0x00000008;
-
-export const SDL_LOG_PRIORITY_VERBOSE = 1;
-export const SDL_LOG_PRIORITY_DEBUG = 2;
-export const SDL_LOG_PRIORITY_INFO = 3;
-export const SDL_LOG_PRIORITY_WARN = 4;
-export const SDL_LOG_PRIORITY_ERROR = 5;
-export const SDL_LOG_PRIORITY_CRITICAL = 6;
-export const SDL_NUM_LOG_PRIORITIES = 7;
-
-export const SDL_QUIT = 0x100;
-
-export const SDL_WINDOWPOS_CENTERED = 0x2FFF0000;
-export const SDL_WINDOWPOS_UNDEFINED = 0x1FFF0000;
-
-export const SDL_KEYDOWN = 0x300
-export const SDL_KEYUP = 0x301
+/* SDL Constants */
+const SDL_INIT_TIMER           = 0x00000001;
+const SDL_INIT_AUDIO           = 0x00000010;
+const SDL_INIT_VIDEO           = 0x00000020;
+const SDL_INIT_JOYSTICK        = 0x00000200;
+const SDL_INIT_HAPTIC          = 0x00001000;
+const SDL_INIT_GAMECONTROLLER  = 0x00002000;
+const SDL_INIT_NOPARACHUTE     = 0x00100000;
+const SDL_INIT_EVERYTHING      = 0x0000FFFF;
+const SDL_HINT_FRAMEBUFFER_ACCELERATION    = "SDL_FRAMEBUFFER_ACCELERATION";
+const SDL_HINT_RENDER_DRIVER               = "SDL_RENDER_DRIVER";
+const SDL_HINT_RENDER_OPENGL_SHADERS       = "SDL_RENDER_OPENGL_SHADERS";
+const SDL_HINT_RENDER_SCALE_QUALITY        = "SDL_RENDER_SCALE_QUALITY";
+const SDL_HINT_RENDER_VSYNC                = "SDL_RENDER_VSYNC";
+const SDL_HINT_VIDEO_X11_XVIDMODE          = "SDL_VIDEO_X11_XVIDMODE";
+const SDL_HINT_VIDEO_X11_XINERAMA          = "SDL_VIDEO_X11_XINERAMA";
+const SDL_HINT_VIDEO_X11_XRANDR            = "SDL_VIDEO_X11_XRANDR";
+const SDL_HINT_GRAB_KEYBOARD               = "SDL_GRAB_KEYBOARD";
+const SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS    = "SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS";
+const SDL_HINT_IDLE_TIMER_DISABLED  = "SDL_IOS_IDLE_TIMER_DISABLED";
+const SDL_HINT_ORIENTATIONS  = "SDL_IOS_ORIENTATIONS";
+const SDL_HINT_GAMECONTROLLERCONFIG  = "SDL_GAMECONTROLLERCONFIG";
+const SDL_HINT_ALLOW_TOPMOST  = "SDL_ALLOW_TOPMOST";
+const SDL_HINT_DEFAULT = 1;
+const SDL_HINT_NORMAL = 2;
+const SDL_HINT_OVERRIDE = 3;
+const SDL_WINDOW_FULLSCREEN = 0x00000001;
+const SDL_WINDOW_OPENGL = 0x00000002;
+const SDL_WINDOW_SHOWN = 0x00000004;
+const SDL_WINDOW_HIDDEN = 0x00000008;
+const SDL_WINDOW_BORDERLESS = 0x00000010;
+const SDL_WINDOW_RESIZABLE = 0x00000020;
+const SDL_WINDOW_MINIMIZED = 0x00000040;
+const SDL_WINDOW_MAXIMIZED = 0x00000080;
+const SDL_WINDOW_INPUT_GRABBED = 0x00000100;
+const SDL_WINDOW_INPUT_FOCUS = 0x00000200;
+const SDL_WINDOW_MOUSE_FOCUS = 0x00000400;
+const SDL_WINDOW_FULLSCREEN_DESKTOP = (  0x00000001 | 0x00001000 );
+const SDL_WINDOW_FOREIGN = 0x00000800;
+const SDL_RENDERER_SOFTWARE = 0x00000001;
+const SDL_RENDERER_ACCELERATED = 0x00000002;
+const SDL_RENDERER_PRESENTVSYNC = 0x00000004;
+const SDL_RENDERER_TARGETTEXTURE = 0x00000008;
+const SDL_LOG_PRIORITY_VERBOSE = 1;
+const SDL_LOG_PRIORITY_DEBUG = 2;
+const SDL_LOG_PRIORITY_INFO = 3;
+const SDL_LOG_PRIORITY_WARN = 4;
+const SDL_LOG_PRIORITY_ERROR = 5;
+const SDL_LOG_PRIORITY_CRITICAL = 6;
+const SDL_NUM_LOG_PRIORITIES = 7;
+const SDL_QUIT = 0x100;
+const SDL_WINDOWPOS_CENTERED = 0x2FFF0000;
+const SDL_WINDOWPOS_UNDEFINED = 0x1FFF0000;
+const SDL_KEYDOWN = 0x300
+const SDL_KEYUP = 0x301
 
 enum image_type {
     IMG_INIT_JPG = 0x00000001,
@@ -71,11 +65,12 @@ enum image_type {
 
 /* SDL Types */
 
-export type SDL_Window = Pointer | null;
-export type SDL_Renderer = Pointer | null;
-export type SDL_Surface = Pointer | null;
-export type SDL_Texture = Pointer | null;
-export type SDL_Rect = Pointer | null;
+type SDL_Window = Pointer | null;
+type SDL_Renderer = Pointer | null;
+type SDL_Surface = Pointer | null;
+type SDL_Texture = Pointer | null;
+type SDL_Rect = Pointer | null;
+type SDL_Point = Pointer | null;
 
 /* SDL Classes */
 
@@ -125,18 +120,54 @@ const SDL_SetWindowIcon = (window: SDL_Window, surface: SDL_Surface) : void => l
 const SDL_SetWindowFullscreen = (window: SDL_Window, flags: number) : number => lib.symbols.SDL_SetWindowFullscreen(window, flags);
 const SDL_GetPerformanceCounter = () : number => lib.symbols.SDL_GetPerformanceCounter();
 const SDL_GetPerformanceFrequency = () : number => lib.symbols.SDL_GetPerformanceFrequency();
+const SDL_RenderDrawRect = (renderer: SDL_Renderer, rect: SDL_Rect) : number => lib.symbols.SDL_RenderDrawRect(renderer, rect);
+const SDL_RenderFillRect = (renderer: SDL_Renderer, rect: SDL_Rect) : number => lib.symbols.SDL_RenderFillRect(renderer, rect);
+const SDL_RenderCopyEx = (renderer: SDL_Renderer, texture: SDL_Texture, srcrect: SDL_Rect, dstrect: SDL_Rect, angle: number, center: SDL_Point, flip: number) : number => lib.symbols.SDL_RenderCopyEx(renderer, texture, srcrect, dstrect, angle, center, flip);
 
 export const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
 export const IMG_Quit = () : void => image.symbols.IMG_Quit();
 export const IMG_Load = (path: string) : SDL_Surface => image.symbols.IMG_Load(Buffer.from(path));
 
 class drawable {
+    name: string;
     image: SDL_Surface
     texture: SDL_Texture
 
-    constructor(image: SDL_Surface, texture: SDL_Texture) {
+    constructor(name: string, image: SDL_Surface, texture: SDL_Texture) {
+        this.name = name;
         this.image = image;
         this.texture = texture;
+    }
+}
+
+export class Animation {
+    images: Map<string, drawable>
+    data: string[];
+    private frame = 0;
+
+    constructor(images: Map<string, drawable>, data: string[]) {
+        this.images = images;
+        this.data = data;
+    }
+
+    update() : void {
+        this.frame++;
+        if (this.frame == this.data.length) {
+            this.frame = 0;
+        }
+    }
+
+    draw(x: number, y: number, width: number, height: number, rotate?: number, flip?: boolean) : void {
+        let r = rotate || 0;
+        let f = flip ? 1 : 0;
+        const destsrc = new Uint32Array(4);
+        destsrc[0] = x;
+        destsrc[1] = y;
+        destsrc[2] = width;
+        destsrc[3] = height;
+        const drawable = this.images.get(this.data[this.frame]);
+        SDL_RenderCopyEx(Wave.rendererPointer, drawable!.texture, null, ptr(destsrc), r, null, f);
+
     }
 }
 
@@ -158,7 +189,6 @@ class Event {
     static get() : EvClass {
         const event = new SDL_Event();
         SDL_PollEvent(event);
-        console.log("running");
         return new EvClass(event.event[0], event.event[5]);
     }
 }
@@ -167,23 +197,67 @@ class Graphics {
 
     static newImage(path: string) {
         const img = IMG_Load(path);
+        const path_split = path.split('/');
+        const t = path_split[path_split.length - 1].replace(".png", "");
         const texture = SDL_CreateTextureFromSurface(Wave.rendererPointer, img);
-        return new drawable(img, texture);
+        return new drawable(t, img, texture);
     }
 
-    static draw(drawable: drawable, x: number, y: number, width: number, height: number) : void {
+    static draw(drawable: drawable, x: number, y: number, width: number, height: number, rotate?: number, flip?: boolean) : void {
+        let r = rotate || 0;
+        let f = flip ? 1 : 0;
         const destsrc = new Uint32Array(4);
         destsrc[0] = x;
         destsrc[1] = y;
         destsrc[2] = width;
         destsrc[3] = height;
-        SDL_RenderCopy(Wave.rendererPointer, drawable.texture, null, ptr(destsrc))
-        SDL_RenderPresent(Wave.rendererPointer);
+        SDL_RenderCopyEx(Wave.rendererPointer, drawable.texture, null, ptr(destsrc), r, null, f);
     }
 
     static clear() {
         SDL_RenderClear(Wave.rendererPointer);
-    }   
+    }
+
+    static rectangle(mode: 'fill' | 'line', x: number, y: number, width: number, height: number) {
+        const rect = new Uint32Array(4);
+        rect[0] = x;
+        rect[1] = y;
+        rect[2] = width;
+        rect[3] = height;
+
+        if (mode == 'fill') {
+            SDL_RenderFillRect(Wave.rendererPointer, ptr(rect));
+        } else if (mode == 'line') {
+            SDL_RenderDrawRect(Wave.rendererPointer, ptr(rect));
+        }
+
+    }
+
+    static flip() : void {
+        SDL_RenderPresent(Wave.rendererPointer);
+    }
+
+    static setColor(red: number, green: number, blue: number, alpha: number) : void {
+        SDL_SetRenderDrawColor(Wave.rendererPointer, red, green, blue, alpha);
+    }
+    
+    static loadAnimation(path: string, frame_duration: number, frames: number) : Animation {
+        const animation_frames = new Map<string, drawable>();;
+        const animation_frame_data = [];
+        const split_path = path.split('/');
+        const animation_name = split_path[split_path.length - 1];
+        for (let n = 0; n < frames; n++) {
+            const animation_frame_id = animation_name + "_" + n.toString();
+            const image_loc = path + '/' + animation_frame_id + ".png";
+            const image = Wave.graphics.newImage(image_loc);
+            animation_frames.set(image.name, image);
+            for (let i = 0; i < frame_duration; i++) {
+                animation_frame_data.push(animation_frame_id);
+            }
+        }
+
+        return new Animation(animation_frames, animation_frame_data);
+    }
 }
 
 class Window {

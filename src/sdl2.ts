@@ -92,6 +92,18 @@ export const lib = dlopen(path, {
     SDL_GetPerformanceFrequency: {
         args: [],
         returns: "int"
+    },
+    SDL_RenderDrawRect: {
+        args: ["pointer", "pointer"],
+        returns: "int"
+    },
+    SDL_RenderFillRect: {
+        args: ["pointer", "pointer"],
+        returns: "int"
+    },
+    SDL_RenderCopyEx: {
+        args: ["pointer", "pointer", "pointer", "pointer", "double", "pointer", "int"],
+        returns: "int"
     }
 })
 
