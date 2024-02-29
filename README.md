@@ -12,6 +12,7 @@ A game framework made for typescript using bun and SDL2.
 |Loading Animations| &check;|
 |Event Handler| &check;|
 |Proper Keyboard Handler| &check;|
+|All Window functions implemented| &cross;|
 |All Graphic functions implemented| &cross;|
 |Audio Handler| &cross;|
 |Drawing Text| &cross;|
@@ -29,12 +30,12 @@ let running = false;
 function load() {
     Wave.init();
     const screen = Wave.createWindow(640, 480);
-    screen.setWindowIcon("./assets/butterfly.png");
     running = true;
 }
 
 function update() {
     const event = Wave.event.get();
+    wave.graphics.rectangle("fill", 0, 0, 640, 480);
 
     if (event.type == Wave.QUIT) {
         running = false;

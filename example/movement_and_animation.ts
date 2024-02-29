@@ -1,7 +1,5 @@
 import { Wave, Animation } from '../index';
 
-let screen;
-let running = false;
 let x = 40, y = 40;
 
 let action = 'idle';
@@ -19,27 +17,16 @@ const change_action = (action: string, new_action: string) => {
 }
 
 function load() {
-    Wave.init();
-    screen = Wave.createWindow(1280, 720);
-    screen.setWindowIcon(import.meta.dir + "/assets/butterfly.png")
+    screen.setIcon(import.meta.dir + "/assets/butterfly.png")
     idleAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/idle", 6, 8);
     walkAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/walk", 6, 8);
-    running = true;
 }
 
 function update() {
     const event = Wave.event.get();
     const dt = Wave.clock.tick();
 
-    switch (event.type) {
-        case Wave.event.QUIT:
-            running = false;
-            break;
-        case Wave.event.KEYDOWN:
-        case Wave.event.KEYUP:
-            Wave.keyboard.handleKey(event);
-            break;
-    }
+    Wave.event.handleEvent(event);
 
     if (Wave.keyboard.isDown('K_a') && (Wave.keyboard.isDown('K_d'))) {
         velocity.x = 0;
@@ -61,10 +48,14 @@ function update() {
         action = newact.action;
     }
 
+    if (Wave.keyboard.isDown('K_ESCAPE')) {
+        Wave.running = false;
+    }
+
    if (action == "walk") {
-    walkAnim.update();
+     walkAnim.update();
    } else {
-    idleAnim.update();
+     idleAnim.update();
    }
 
    x += velocity.x * dt;
@@ -75,7 +66,7 @@ function draw() {
 
     Wave.graphics.clear();
     Wave.graphics.setColor(70,130,170,1);
-    Wave.graphics.rectangle('fill', 0, 0, 1280, 720);
+    Wave.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
     Wave.graphics.setColor(0,0,0,1);
     
     if (action == "walk") {
@@ -88,9 +79,10 @@ function draw() {
 
 }
 
+const screen = Wave.createWindow(1280, 720);
 load();
 
-while (running) {
+while (Wave.running) {
     update();
     draw();
 }

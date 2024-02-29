@@ -92,10 +92,14 @@ const SDL_GetPerformanceFrequency = () : number => lib.symbols.SDL_GetPerformanc
 const SDL_RenderDrawRect = (renderer: SDL_Renderer, rect: SDL_Rect) : number => lib.symbols.SDL_RenderDrawRect(renderer, rect);
 const SDL_RenderFillRect = (renderer: SDL_Renderer, rect: SDL_Rect) : number => lib.symbols.SDL_RenderFillRect(renderer, rect);
 const SDL_RenderCopyEx = (renderer: SDL_Renderer, texture: SDL_Texture, srcrect: SDL_Rect, dstrect: SDL_Rect, angle: number, center: SDL_Point, flip: number) : number => lib.symbols.SDL_RenderCopyEx(renderer, texture, srcrect, dstrect, angle, center, flip);
+const SDL_SetWindowTitle = (window: SDL_Window, title: string) : void => lib.symbols.SDL_SetWindowTitle(window, Buffer.from(title));
+const SDL_SetWindowSize = (window: SDL_Window, width: number, height: number) : void => lib.symbols.SDL_SetWindowSize(window, width, height);
+const SDL_SetWindowPosition = (window: SDL_Window, x: number, y: number) : void => lib.symbols.SDL_SetWindowPosition(window, x, y);;
+const SDL_GetDesktopDisplayMode = (index: number, mode: Uint32Array) : number => lib.symbols.SDL_GetDesktopDisplayMode(index, ptr(mode));
 
-export const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
-export const IMG_Quit = () : void => image.symbols.IMG_Quit();
-export const IMG_Load = (path: string) : SDL_Surface => image.symbols.IMG_Load(Buffer.from(path));
+const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
+const IMG_Quit = () : void => image.symbols.IMG_Quit();
+const IMG_Load = (path: string) : SDL_Surface => image.symbols.IMG_Load(Buffer.from(path));
 
 type keys =
   | "K_UNKNOWN"
@@ -677,6 +681,18 @@ class WaveEvent {
         SDL_PollEvent(event);
         return new Event(event.event[0], event.event[5]);
     }
+
+    static handleEvent(event:Event) {
+        switch (event.type) {
+            case Wave.event.QUIT:
+                Wave.running = false;
+                break;
+            case Wave.event.KEYDOWN:
+            case Wave.event.KEYUP:
+                Wave.keyboard.handleKey(event);
+                break;
+        }
+    }
 }
 
 class WaveGraphics {
@@ -806,17 +822,54 @@ class WaveGraphics {
 }
 
 class WaveWindow {
-    private pointer;
+    private pointer: SDL_Window;
+    private width: number;
+    private height: number;
+    private title: string;
+    private fullscreen = false;
 
-    constructor(pointer : SDL_Window) {
+    constructor(pointer : SDL_Window, width: number, height: number, title: string) {
         this.pointer = pointer;
+        this.width = width;
+        this.height = height;
+        this.title = title;
+    }
+
+    getWidth() : number{
+        return this.width;
+    }
+
+    getHeight() : number {
+        return this.height;
+    }
+
+    getDimensions() {
+        return {width: this.width, height: this.height};
+    }
+
+    setSize(width: number, height: number) {
+        SDL_SetWindowSize(this.pointer, width, height);
+
+        SDL_SetWindowPosition(this.pointer, Wave.desktopWidth / 2 - (width / 2), Wave.deskopHeight / 2 - (height / 2));
+        
+        this.width = width;
+        this.height = height;
+    }
+
+    getTitle() {
+        return this.title;
+    }
+
+    setTitle(title: string) {
+        SDL_SetWindowTitle(this.pointer, title);
+        this.title = title;
     }
 
     /**
      * Method to set the icon of the window
      * @param path Path of image
      */
-    setWindowIcon(path: string) {
+    setIcon(path: string) {
         const icon = IMG_Load(path);
         SDL_SetWindowIcon(this.pointer, icon);
     }
@@ -826,8 +879,13 @@ class WaveWindow {
      * 
      * @param flag set the fullscreen flag of the window
      */
-    setWindowFullscreen(flag: boolean) {
+    setFullscreen(flag: boolean) {
         SDL_SetWindowFullscreen(this.pointer, flag ? SDL_WINDOW_FULLSCREEN : 0);
+        this.fullscreen = flag;
+    }
+
+    getFullscreen() {
+        return this.fullscreen;
     }
 }
 
@@ -886,6 +944,11 @@ export class Wave {
     public static clock = WaveClock;
     public static keyboard = WaveKeyboard;
 
+    public static running = true;
+
+    public static desktopWidth = 0;
+    public static deskopHeight = 0;
+
     /**
      * Pointer of window. Please never touch this.
      */
@@ -901,6 +964,10 @@ export class Wave {
     public static init() : void {
         SDL_Init(SDL_INIT_EVERYTHING);
         IMG_Init(image_type.IMG_INIT_PNG + image_type.IMG_INIT_JPG);
+        const mode = new Uint32Array(3);
+        SDL_GetDesktopDisplayMode(0, mode);
+        this.desktopWidth = mode[1];
+        this.deskopHeight = mode[2];
     }
 
     /**
@@ -916,13 +983,15 @@ export class Wave {
     /**
      * Method to create a window in the center of the screen
      * 
-     * @param width width of window
-     * @param height height of window
+     * @param title Title of window
+     * @param width Width of window
+     * @param height Height of window
      * @returns 
      */
     public static createWindow(width: number, height: number) {
-        this.windowPointer = SDL_CreateWindow("Tygame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+        this.windowPointer = SDL_CreateWindow("title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
         this.rendererPointer = SDL_CreateRenderer(this.windowPointer, -1, SDL_RENDERER_PRESENTVSYNC);
-        return new WaveWindow(this.windowPointer);
+        const ww = new WaveWindow(this.windowPointer, width, height, "title");
+        return ww;
     }
 }

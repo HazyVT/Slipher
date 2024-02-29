@@ -104,6 +104,22 @@ export const lib = dlopen(path, {
     SDL_RenderCopyEx: {
         args: ["pointer", "pointer", "pointer", "pointer", "double", "pointer", "int"],
         returns: "int"
+    },
+    SDL_SetWindowTitle: {
+        args: ["pointer", "cstring"],
+        returns: "void"
+    },
+    SDL_SetWindowSize: {
+        args: ["pointer", "int", "int"],
+        returns: "void"
+    },
+    SDL_SetWindowPosition: {
+        args: ["pointer", "int", "int"],
+        returns: "void"
+    },
+    SDL_GetDesktopDisplayMode: {
+        args: ["int", "pointer"],
+        returns: "int"
     }
 })
 
