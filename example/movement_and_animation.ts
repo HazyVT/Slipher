@@ -22,8 +22,8 @@ function load() {
     Wave.init();
     screen = Wave.createWindow(1280, 720);
     screen.setWindowIcon(import.meta.dir + "/assets/butterfly.png")
-    idleAnim = Wave.graphics.loadAnimation(import.meta.dir + "/assets/idle", 0.3, 8);
-    walkAnim = Wave.graphics.loadAnimation(import.meta.dir + "/assets/walk", 0.3, 8);
+    idleAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/idle", 6, 8);
+    walkAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/walk", 6, 8);
     running = true;
 }
 
@@ -31,41 +31,35 @@ function update() {
     const event = Wave.event.get();
     const dt = Wave.clock.tick();
 
-
     switch (event.type) {
-        case Wave.QUIT:
+        case Wave.event.QUIT:
             running = false;
             break;
-        case Wave.KEYDOWN:
-            if (event.value == Wave.K_ESCAPE) {
-                running = false;
-            } else if (event.value == Wave.K_a) {
-                velocity.x = -128;
-            } else if (event.value == Wave.K_d) {
-                velocity.x = 128;
-            }
-            break;
-        case Wave.KEYUP:
-            if (event.value == Wave.K_a) {
-                velocity.x = 0;
-            } else if (event.value == Wave.K_d) {
-                velocity.x = 0;
-            }
+        case Wave.event.KEYDOWN:
+        case Wave.event.KEYUP:
+            Wave.keyboard.handleKey(event);
             break;
     }
 
-    if (velocity.x > 0) {
-        const newact = change_action(action, "walk");
+    if (Wave.keyboard.isDown('K_a') && (Wave.keyboard.isDown('K_d'))) {
+        velocity.x = 0;
+        const newact = change_action(action, "idle");
         action = newact.action;
-        flip = false;
-   } else if (velocity.x < 0) {
+    } else if (Wave.keyboard.isDown('K_a')) {
+        velocity.x = -128;
         const newact = change_action(action, "walk");
         action = newact.action;
         flip = true;
-   } else {
+    } else if (Wave.keyboard.isDown('K_d')) {
+        velocity.x = 128;
+        const newact = change_action(action, "walk");
+        action = newact.action;
+        flip = false;
+    } else {
+        velocity.x = 0;
         const newact = change_action(action, "idle");
         action = newact.action;
-   }
+    }
 
    if (action == "walk") {
     walkAnim.update();

@@ -11,7 +11,7 @@ A game framework made for typescript using bun and SDL2.
 |Delta Time| &check;|
 |Loading Animations| &check;|
 |Event Handler| &check;|
-|Proper Keyboard Handler| &cross;|
+|Proper Keyboard Handler| &check;|
 |All Graphic functions implemented| &cross;|
 |Audio Handler| &cross;|
 |Drawing Text| &cross;|
