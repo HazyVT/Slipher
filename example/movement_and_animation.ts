@@ -20,6 +20,7 @@ const change_action = (action: string, new_action: string) => {
 
 function load() {
     screen.setIcon("./assets/butterfly.png")
+    screen.setFrameRate(144);
     idleAnim = Wave.graphics.createAnimation("./assets/idle", 8, 8);
     walkAnim = Wave.graphics.createAnimation("./assets/walk", 8, 8);
 }
@@ -35,12 +36,12 @@ function update() {
         const newact = change_action(action, "idle");
         action = newact.action;
     } else if (Wave.keyboard.isDown('K_a')) {
-        velocity.x = -128;
+        velocity.x = -4;
         const newact = change_action(action, "walk");
         action = newact.action;
         flip = true;
     } else if (Wave.keyboard.isDown('K_d')) {
-        velocity.x = 128;
+        velocity.x = 4;
         const newact = change_action(action, "walk");
         action = newact.action;
         flip = false;
@@ -59,6 +60,9 @@ function update() {
     } else {
         idleAnim.update();
     }
+
+    x += velocity.x;
+    y += velocity.y;
 
     screen.capFrameRate(tick);
 

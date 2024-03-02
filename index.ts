@@ -916,8 +916,8 @@ class WaveWindow {
     }
 
     capFrameRate(tick: number) {
-        if ((1000 / 60) > Wave.clock.tick() - tick) {
-            SDL_Delay(1000 / 60 - (Wave.clock.tick() - tick));
+        if ((1000 / this.framerate) > Wave.clock.tick() - tick) {
+            SDL_Delay(1000 / this.framerate - (Wave.clock.tick() - tick));
         }
     }
 }
