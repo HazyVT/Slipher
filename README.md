@@ -13,10 +13,10 @@ A game framework made for typescript using bun and SDL2.
 |Event Handler| &check;|
 |Proper Keyboard Handler| &check;|
 |All Window functions implemented| &check;|
+|Proper Building| &check;|
 |All Graphic functions implemented| &cross;|
 |Audio Handler| &cross;|
 |Drawing Text| &cross;|
-|Proper Building| &cross;|
 
 
 ### Simple Example Code
