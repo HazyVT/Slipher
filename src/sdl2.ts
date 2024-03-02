@@ -163,5 +163,13 @@ export const gfx = dlopen(gfxpath, {
     SDL_setFramerate: {
         args: ["pointer", "int"],
         returns: "int"
+    },
+    pixelColor: {
+        args: ["pointer", "int", "int", 'uint32_t'],
+        returns: "int"
+    },
+    pixelRGBA: {
+        args: ["pointer", "int", "int", "int", "int", "int", "int"],
+        returns: "int"
     }
 })

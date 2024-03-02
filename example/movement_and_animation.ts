@@ -81,6 +81,8 @@ function draw() {
         idleAnim.draw(x,y,516,516,0,flip);
     }
 
+    Wave.graphics.pixel(20, 20, 255, 0, 0, 255);
+
    Wave.graphics.flip();
 
 }
