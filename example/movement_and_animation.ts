@@ -20,7 +20,6 @@ const change_action = (action: string, new_action: string) => {
 
 function load() {
     screen.setIcon("./assets/butterfly.png")
-    screen.setFrameRate(144);
     idleAnim = Wave.graphics.createAnimation("./assets/idle", 8, 8);
     walkAnim = Wave.graphics.createAnimation("./assets/walk", 8, 8);
 }
@@ -73,7 +72,7 @@ function draw() {
     Wave.graphics.clear();
     Wave.graphics.setColor(70,130,170,1);
     Wave.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
-    Wave.graphics.setColor(0,0,0,1);
+    Wave.graphics.setColor(255,255,255,1);
     
     if (action == "walk") {
         walkAnim.draw(x,y,516,516,0,flip);
@@ -81,7 +80,7 @@ function draw() {
         idleAnim.draw(x,y,516,516,0,flip);
     }
 
-    Wave.graphics.pixel(20, 20, 255, 0, 0, 255);
+    Wave.graphics.pixel(20, 20, 255, 255, 0, 255);
 
    Wave.graphics.flip();
 

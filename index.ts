@@ -851,7 +851,6 @@ class WaveGraphics {
         const bhex = this.checkhex(blue.toString(16));
         const ahex = this.checkhex(alpha.toString(16));
         const color = "0x" + rhex + ghex + bhex + ahex;
-        console.log(color);
         pixelColor(Wave.rendererPointer, x, y, color);
     }
 }
@@ -1045,7 +1044,7 @@ export class Wave {
      */
     public static createWindow(width: number, height: number) {
         this.windowPointer = SDL_CreateWindow("title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
-        this.rendererPointer = SDL_CreateRenderer(this.windowPointer, -1, SDL_RENDERER_PRESENTVSYNC);
+        this.rendererPointer = SDL_CreateRenderer(this.windowPointer, -1, 0);
         return new WaveWindow(this.windowPointer, width, height, "title");;
     }
 }
