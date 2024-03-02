@@ -1,7 +1,6 @@
 import { Wave } from "../index";
 
 function load() {
-    screen.setSize(1280, 720);
 }
 
 function update() {
@@ -23,7 +22,6 @@ load();
 
 while(Wave.running) {
     update();
-    console.log(screen.getFrameRate());
     draw();
 }
 

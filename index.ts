@@ -100,7 +100,7 @@ const SDL_RenderDrawPoint = (renderer: SDL_Renderer, x: number, y: number) : num
 const SDL_getFramerate = (manager: Uint32Array) : number => gfx.symbols.SDL_getFramerate(ptr(manager));
 const SDL_initFramerate = (manager: Uint32Array) : void => gfx.symbols.SDL_initFramerate(ptr(manager));
 const SDL_getFramecount = (manager: Uint32Array) : number => gfx.symbols.SDL_getFramecount(ptr(manager));
-const SDL_setFramerate = (manager: Uint32Array, rate: number) : number => gfx.symbols.SDL_setFramerate(ptr(manager));
+const SDL_setFramerate = (manager: Uint32Array, rate: number) : number => gfx.symbols.SDL_setFramerate(ptr(manager), rate);
 
 const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
 const IMG_Quit = () : void => image.symbols.IMG_Quit();
@@ -817,7 +817,7 @@ class WaveGraphics {
             const image = Wave.graphics.newImage(image_loc);
             if (image != null) {
                 animation_frames.set(image.name, image);
-                for (let i = 0; i < frame_duration; i++) {
+                for (let i = 0; i < (frame_duration * (30 / 60)); i++) {
                     animation_frame_data.push(animation_frame_id);
                 }
             }
@@ -833,6 +833,7 @@ class WaveWindow {
     private title: string;
     private fullscreen = false;
     private manager = new Uint32Array(6);
+    private framerate = 60;
 
     constructor(pointer : SDL_Window, width: number, height: number, title: string) {
         this.pointer = pointer;
@@ -840,7 +841,7 @@ class WaveWindow {
         this.height = height;
         this.title = title;
         SDL_initFramerate(this.manager);
-        SDL_setFramerate(this.manager, 60);
+        SDL_setFramerate(this.manager, this.framerate);
     }
 
     getWidth() : number{
@@ -858,6 +859,11 @@ class WaveWindow {
     getFrameRate() {
         SDL_getFramerate(this.manager);
         return this.manager;
+    }
+
+    setFrameRate(framerate: number) {
+        SDL_setFramerate(this.manager, framerate);
+        this.framerate = framerate;
     }
 
     setSize(width: number, height: number) {
