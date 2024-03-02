@@ -817,7 +817,7 @@ class WaveGraphics {
             const image = Wave.graphics.newImage(image_loc);
             if (image != null) {
                 animation_frames.set(image.name, image);
-                for (let i = 0; i < (frame_duration * (30 / 60)); i++) {
+                for (let i = 0; i < (frame_duration + (30 * (30 / 60))); i++) {
                     animation_frame_data.push(animation_frame_id);
                 }
             }

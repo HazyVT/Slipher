@@ -18,8 +18,8 @@ const change_action = (action: string, new_action: string) => {
 
 function load() {
     screen.setIcon(import.meta.dir + "/assets/butterfly.png")
-    idleAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/idle", 6, 8);
-    walkAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/walk", 6, 8);
+    idleAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/idle", 1, 8);
+    walkAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/walk", 1, 8);
 }
 
 function update() {
