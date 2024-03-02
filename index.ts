@@ -1,4 +1,4 @@
-import { image, lib } from "./src/sdl2";
+import { gfx, image, lib } from "./src/sdl2";
 import { type Pointer, ptr} from 'bun:ffi';
 
 /* SDL Constants */
@@ -96,6 +96,11 @@ const SDL_SetWindowTitle = (window: SDL_Window, title: string) : void => lib.sym
 const SDL_SetWindowSize = (window: SDL_Window, width: number, height: number) : void => lib.symbols.SDL_SetWindowSize(window, width, height);
 const SDL_SetWindowPosition = (window: SDL_Window, x: number, y: number) : void => lib.symbols.SDL_SetWindowPosition(window, x, y);;
 const SDL_GetDesktopDisplayMode = (index: number, mode: Uint32Array) : number => lib.symbols.SDL_GetDesktopDisplayMode(index, ptr(mode));
+const SDL_RenderDrawPoint = (renderer: SDL_Renderer, x: number, y: number) : number => lib.symbols.SDL_RenderDrawPoint(renderer, x, y);
+const SDL_getFramerate = (manager: Uint32Array) : number => gfx.symbols.SDL_getFramerate(ptr(manager));
+const SDL_initFramerate = (manager: Uint32Array) : void => gfx.symbols.SDL_initFramerate(ptr(manager));
+const SDL_getFramecount = (manager: Uint32Array) : number => gfx.symbols.SDL_getFramecount(ptr(manager));
+const SDL_setFramerate = (manager: Uint32Array, rate: number) : number => gfx.symbols.SDL_setFramerate(ptr(manager));
 
 const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
 const IMG_Quit = () : void => image.symbols.IMG_Quit();
@@ -756,7 +761,7 @@ class WaveGraphics {
      * @param width width of rectangle
      * @param height height of rectangle
      */
-    static rectangle(mode: 'fill' | 'line', x: number, y: number, width: number, height: number) {
+    static rectangle(mode: 'fill' | 'line', x: number, y: number, width: number, height: number) : void {
         const rect = new Uint32Array(4);
         rect[0] = x;
         rect[1] = y;
@@ -827,12 +832,15 @@ class WaveWindow {
     private height: number;
     private title: string;
     private fullscreen = false;
+    private manager = new Uint32Array(6);
 
     constructor(pointer : SDL_Window, width: number, height: number, title: string) {
         this.pointer = pointer;
         this.width = width;
         this.height = height;
         this.title = title;
+        SDL_initFramerate(this.manager);
+        SDL_setFramerate(this.manager, 60);
     }
 
     getWidth() : number{
@@ -845,6 +853,11 @@ class WaveWindow {
 
     getDimensions() {
         return {width: this.width, height: this.height};
+    }
+
+    getFrameRate() {
+        SDL_getFramerate(this.manager);
+        return this.manager;
     }
 
     setSize(width: number, height: number) {
@@ -991,7 +1004,6 @@ export class Wave {
     public static createWindow(width: number, height: number) {
         this.windowPointer = SDL_CreateWindow("title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
         this.rendererPointer = SDL_CreateRenderer(this.windowPointer, -1, SDL_RENDERER_PRESENTVSYNC);
-        const ww = new WaveWindow(this.windowPointer, width, height, "title");
-        return ww;
+        return new WaveWindow(this.windowPointer, width, height, "title");;
     }
 }

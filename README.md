@@ -12,12 +12,11 @@ A game framework made for typescript using bun and SDL2.
 |Loading Animations| &check;|
 |Event Handler| &check;|
 |Proper Keyboard Handler| &check;|
-|All Window functions implemented| &cross;|
+|All Window functions implemented| &check;|
 |All Graphic functions implemented| &cross;|
 |Audio Handler| &cross;|
 |Drawing Text| &cross;|
 |Proper Building| &cross;|
-|Extend All Classes with proper getters and setters| &cross;|
 
 
 ### Simple Example Code
@@ -25,33 +24,28 @@ A game framework made for typescript using bun and SDL2.
 ```ts
 import { Wave } from "wave";
 
-let running = false;
-
 function load() {
-    Wave.init();
-    const screen = Wave.createWindow(640, 480);
-    running = true;
+    screen.setSize(1280, 720);
 }
 
 function update() {
     const event = Wave.event.get();
-    wave.graphics.rectangle("fill", 0, 0, 640, 480);
 
-    if (event.type == Wave.QUIT) {
-        running = false;
-    }
-
-    Wave.graphics.flip();
+    Wave.event.handleEvent(event);
 }
 
 function draw() {
     Wave.graphics.setColor(255,255,255,1);
-    Wave.graphics.rectangle('fill', 0, 0, 640, 480);
+    Wave.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
+
+    Wave.graphics.flip();
 }
 
+Wave.init();
+const screen = Wave.createWindow(640, 480);
 load();
 
-while(running) {
+while(Wave.running) {
     update();
     draw();
 }

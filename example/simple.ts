@@ -12,7 +12,7 @@ function update() {
 
 function draw() {
     Wave.graphics.setColor(255,255,255,1);
-    Wave.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
+    Wave.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());    
 
     Wave.graphics.flip();
 }
@@ -23,6 +23,7 @@ load();
 
 while(Wave.running) {
     update();
+    console.log(screen.getFrameRate());
     draw();
 }
 

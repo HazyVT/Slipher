@@ -2,6 +2,7 @@ import { dlopen, suffix } from 'bun:ffi';
 
 const path = `./lib/libSDL2.${suffix}`;
 const imagepath = `./lib/libSDL2_image-2.0.0.${suffix}`;
+const gfxpath = `./lib/libSDL2_gfx-1.0.0.${suffix}`;
 
 
 export const lib = dlopen(path, {
@@ -120,6 +121,10 @@ export const lib = dlopen(path, {
     SDL_GetDesktopDisplayMode: {
         args: ["int", "pointer"],
         returns: "int"
+    },
+    SDL_RenderDrawPoint: {
+        args: ["pointer", "int", "int"],
+        returns: "int"
     }
 })
 
@@ -135,5 +140,24 @@ export const image = dlopen(imagepath, {
     IMG_Load: {
         args: ["cstring"],
         returns: "pointer"
+    }
+})
+
+export const gfx = dlopen(gfxpath, {
+    SDL_getFramerate: {
+        args: ["pointer"],
+        returns: "int"
+    },
+    SDL_initFramerate: {
+        args: ["pointer"],
+        returns: "void"
+    },
+    SDL_getFramecount: {
+        args: ["pointer"],
+        returns: "int"
+    },
+    SDL_setFramerate: {
+        args: ["pointer", "int"],
+        returns: "int"
     }
 })
