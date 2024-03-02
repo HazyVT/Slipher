@@ -97,10 +97,13 @@ const SDL_SetWindowSize = (window: SDL_Window, width: number, height: number) : 
 const SDL_SetWindowPosition = (window: SDL_Window, x: number, y: number) : void => lib.symbols.SDL_SetWindowPosition(window, x, y);;
 const SDL_GetDesktopDisplayMode = (index: number, mode: Uint32Array) : number => lib.symbols.SDL_GetDesktopDisplayMode(index, ptr(mode));
 const SDL_RenderDrawPoint = (renderer: SDL_Renderer, x: number, y: number) : number => lib.symbols.SDL_RenderDrawPoint(renderer, x, y);
+const SDL_Delay = (ms: number) : void => lib.symbols.SDL_Delay(ms);
+const SDL_GetTicks = () : number => lib.symbols.SDL_GetTicks();
 const SDL_getFramerate = (manager: Uint32Array) : number => gfx.symbols.SDL_getFramerate(ptr(manager));
 const SDL_initFramerate = (manager: Uint32Array) : void => gfx.symbols.SDL_initFramerate(ptr(manager));
 const SDL_getFramecount = (manager: Uint32Array) : number => gfx.symbols.SDL_getFramecount(ptr(manager));
 const SDL_setFramerate = (manager: Uint32Array, rate: number) : number => gfx.symbols.SDL_setFramerate(ptr(manager), rate);
+
 
 const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
 const IMG_Quit = () : void => image.symbols.IMG_Quit();
@@ -663,12 +666,17 @@ class WaveClock {
      * @returns delta time
      */
     static tick() : number {
-        this.last = this.now;
-        this.now = SDL_GetPerformanceCounter();
-     
-        this.dt = ((this.now - this.last)) / SDL_GetPerformanceFrequency();
-        return this.dt;
+        return SDL_GetTicks();
     }
+
+    static counter() {
+        return SDL_GetPerformanceCounter();
+    }
+
+    static frequency() {
+        return SDL_GetPerformanceFrequency();
+    }
+
 }
 
 class WaveEvent {
@@ -817,7 +825,7 @@ class WaveGraphics {
             const image = Wave.graphics.newImage(image_loc);
             if (image != null) {
                 animation_frames.set(image.name, image);
-                for (let i = 0; i < (frame_duration + (30 * (30 / 60))); i++) {
+                for (let i = 0; i < frame_duration; i++) {
                     animation_frame_data.push(animation_frame_id);
                 }
             }
@@ -905,6 +913,12 @@ class WaveWindow {
 
     getFullscreen() {
         return this.fullscreen;
+    }
+
+    capFrameRate(tick: number) {
+        if ((1000 / 60) > Wave.clock.tick() - tick) {
+            SDL_Delay(1000 / 60 - (Wave.clock.tick() - tick));
+        }
     }
 }
 

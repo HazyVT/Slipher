@@ -6,6 +6,8 @@ let action = 'idle';
 let flip = false;
 let velocity = {x: 0, y: 0};
 
+let time = 0;
+
 let idleAnim: Animation;
 let walkAnim: Animation;
 
@@ -18,13 +20,13 @@ const change_action = (action: string, new_action: string) => {
 
 function load() {
     screen.setIcon(import.meta.dir + "/assets/butterfly.png")
-    idleAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/idle", 1, 8);
-    walkAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/walk", 1, 8);
+    idleAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/idle", 6, 8);
+    walkAnim = Wave.graphics.createAnimation(import.meta.dir + "/assets/walk", 6, 8);
 }
 
 function update() {
     const event = Wave.event.get();
-    const dt = Wave.clock.tick();
+    const tick = Wave.clock.tick();
 
     Wave.event.handleEvent(event);
 
@@ -52,14 +54,14 @@ function update() {
         Wave.running = false;
     }
 
-   if (action == "walk") {
-     walkAnim.update();
-   } else {
-     idleAnim.update();
-   }
+    if (action == "walk") {
+        walkAnim.update();
+    } else {
+        idleAnim.update();
+    }
 
-   x += velocity.x * dt;
-   y += velocity.y * dt;
+    screen.capFrameRate(tick);
+
 }
 
 function draw() {

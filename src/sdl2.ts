@@ -125,6 +125,10 @@ export const lib = dlopen(path, {
     SDL_RenderDrawPoint: {
         args: ["pointer", "int", "int"],
         returns: "int"
+    },
+    SDL_GetTicks: {
+        args: [],
+        returns: "uint32_t"
     }
 })
 
