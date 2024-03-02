@@ -74,7 +74,7 @@ export class SDL_Event {
     }
 }
 
-const SDL_CreateWindow = (title: string, x: number, y: number, width: number, height: number, flags: number) : SDL_Window => lib.symbols.SDL_CreateWindow(Buffer.from(title), x, y, width, height, flags);
+const SDL_CreateWindow = (title: string, x: number, y: number, width: number, height: number, flags: number) : SDL_Window => lib.symbols.SDL_CreateWindow(Buffer.from(title + "\x00"), x, y, width, height, flags);
 const SDL_Init = (flag: number) : number => lib.symbols.SDL_Init(flag);
 const SDL_DestroyWindow = (window: SDL_Window) => lib.symbols.SDL_DestroyWindow(window);
 const SDL_Quit = () : void => lib.symbols.SDL_Quit();
@@ -92,7 +92,7 @@ const SDL_GetPerformanceFrequency = () : number => lib.symbols.SDL_GetPerformanc
 const SDL_RenderDrawRect = (renderer: SDL_Renderer, rect: SDL_Rect) : number => lib.symbols.SDL_RenderDrawRect(renderer, rect);
 const SDL_RenderFillRect = (renderer: SDL_Renderer, rect: SDL_Rect) : number => lib.symbols.SDL_RenderFillRect(renderer, rect);
 const SDL_RenderCopyEx = (renderer: SDL_Renderer, texture: SDL_Texture, srcrect: SDL_Rect, dstrect: SDL_Rect, angle: number, center: SDL_Point, flip: number) : number => lib.symbols.SDL_RenderCopyEx(renderer, texture, srcrect, dstrect, angle, center, flip);
-const SDL_SetWindowTitle = (window: SDL_Window, title: string) : void => lib.symbols.SDL_SetWindowTitle(window, Buffer.from(title));
+const SDL_SetWindowTitle = (window: SDL_Window, title: string) : void => lib.symbols.SDL_SetWindowTitle(window, Buffer.from(title + "\x00"));
 const SDL_SetWindowSize = (window: SDL_Window, width: number, height: number) : void => lib.symbols.SDL_SetWindowSize(window, width, height);
 const SDL_SetWindowPosition = (window: SDL_Window, x: number, y: number) : void => lib.symbols.SDL_SetWindowPosition(window, x, y);;
 const SDL_GetDesktopDisplayMode = (index: number, mode: Uint32Array) : number => lib.symbols.SDL_GetDesktopDisplayMode(index, ptr(mode));
@@ -107,7 +107,7 @@ const SDL_setFramerate = (manager: Uint32Array, rate: number) : number => gfx.sy
 
 const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
 const IMG_Quit = () : void => image.symbols.IMG_Quit();
-const IMG_Load = (path: string) : SDL_Surface => image.symbols.IMG_Load(Buffer.from(path));
+const IMG_Load = (path: string) : SDL_Surface => image.symbols.IMG_Load(Buffer.from(path + "\x00"));
 
 type keys =
   | "K_UNKNOWN"

@@ -10,7 +10,7 @@
   },
   "scripts": {
     "make_out_dir" : "mkdir out && cd out && mkdir lib && mkdir assets",
-    "init_build" : "bun run make_out_dir && cp ./lib/* ./out/lib && cp -r ./assets ./out/assets",
+    "init_build" : "bun run make_out_dir && cp ./lib/* ./out/lib && cp -r ./assets ./out",
     "build" : "rm -r out && bun run init_build && bun build example/movement_and_animation.ts --compile --minify --outfile ./out/main"
   }
 }
