@@ -99,10 +99,13 @@ const SDL_GetDesktopDisplayMode = (index: number, mode: Uint32Array) : number =>
 const SDL_RenderDrawPoint = (renderer: SDL_Renderer, x: number, y: number) : number => lib.symbols.SDL_RenderDrawPoint(renderer, x, y);
 const SDL_Delay = (ms: number) : void => lib.symbols.SDL_Delay(ms);
 const SDL_GetTicks = () : number => lib.symbols.SDL_GetTicks();
+
 const SDL_getFramerate = (manager: Uint32Array) : number => gfx.symbols.SDL_getFramerate(ptr(manager));
 const SDL_initFramerate = (manager: Uint32Array) : void => gfx.symbols.SDL_initFramerate(ptr(manager));
-const SDL_getFramecount = (manager: Uint32Array) : number => gfx.symbols.SDL_getFramecount(ptr(manager));
 const SDL_setFramerate = (manager: Uint32Array, rate: number) : number => gfx.symbols.SDL_setFramerate(ptr(manager), rate);
+
+const pixelRGBA = (renderer: SDL_Renderer, x: number, y: number, r: number, b: number, g: number, a: number) : number => gfx.symbols.pixelRGBA(renderer, x, y, r, g, b, a);
+const pixelColor = (renderer: SDL_Renderer, x: number, y: number, color: string) : number => gfx.symbols.pixelColor(renderer, x, y, Number(color));
 
 
 const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
@@ -832,6 +835,24 @@ class WaveGraphics {
         }
         return new Animation(animation_frames, animation_frame_data);
     }
+
+    private static checkhex(hex: string) {
+        if (hex.length == 1) {
+            return hex.padStart(2, '0');
+        } else {
+            return hex;
+        }
+    }
+
+    /* Primitive shape rendering */
+    static pixel(x: number, y: number, red: number, green: number, blue: number, alpha: number) {
+        const rhex = this.checkhex(red.toString(16));
+        const ghex = this.checkhex(green.toString(16));
+        const bhex = this.checkhex(blue.toString(16));
+        const ahex = this.checkhex(alpha.toString(16));
+        const color = "0x" + rhex + ghex + bhex + ahex;
+        pixelColor(Wave.rendererPointer, x, y, color);
+    }
 }
 
 class WaveWindow {
@@ -1023,7 +1044,7 @@ export class Wave {
      */
     public static createWindow(width: number, height: number) {
         this.windowPointer = SDL_CreateWindow("title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
-        this.rendererPointer = SDL_CreateRenderer(this.windowPointer, -1, SDL_RENDERER_PRESENTVSYNC);
+        this.rendererPointer = SDL_CreateRenderer(this.windowPointer, -1, 0);
         return new WaveWindow(this.windowPointer, width, height, "title");;
     }
 }
