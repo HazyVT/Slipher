@@ -4,19 +4,19 @@ A game framework made for typescript using bun and SDL2.
 
 ## Wave is not yet ready Please do not use until ready.
 
-|Feature|Done|
-|:-------|--------:|
-|Window Rendering| &check;|
-|Drawing Images| &check;|
-|Delta Time| &check;|
-|Loading Animations| &check;|
-|Event Handler| &check;|
-|Proper Keyboard Handler| &check;|
-|All Window functions implemented| &check;|
-|Proper Building| &check;|
-|All Graphic functions implemented| &cross;|
-|Audio Handler| &cross;|
-|Drawing Text| &cross;|
+|Feature|Windows|Mac|Linux|
+|:-------|--------|--------|-----:|
+|Window Rendering| &check;|&check;|-|
+|Drawing Images| &check;|&check;|-|
+|Delta Time| &check;|&check;|-|
+|Loading Animations| &check;|&check;|-|
+|Event Handler| &check;|&check;|-|
+|Proper Keyboard Handler| &check;|&check;|-|
+|All Window functions implemented| &check;|&check;|-|
+|Proper Building| &check;|&cross;|-|
+|All Graphic functions implemented| &cross;|&cross;|-|
+|Audio Handler| &cross;|&cross;|-|
+|Drawing Text| &cross;|&cross;|-|
 
 
 ### Simple Example Code
