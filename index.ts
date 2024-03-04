@@ -599,7 +599,35 @@ class Event {
     } 
 }
 
-class Drawable {
+class MouseMotionEvent {
+    public type;
+    public xpos;
+    public ypos;
+
+    constructor(type: number, xpos: number, ypos: number) {
+        this.type = type;
+        this.xpos = xpos;
+        this.ypos = ypos;
+    }
+}
+
+class MouseButtonEvent {
+    public type;
+    public xpos;
+    public ypos;
+    public button;
+    public clicks;
+
+    constructor(type: number, xpos: number, ypos: number, button: number, clicks: number) {
+        this.type = type;
+        this.xpos = xpos;
+        this.ypos = ypos;
+        this.button = button;
+        this.clicks = clicks;
+    }
+}
+
+export class Drawable {
     name: string;
     image: SDL_Surface
     texture: SDL_Texture
@@ -687,25 +715,35 @@ class WaveEvent {
     public static QUIT = SDL_QUIT;
     public static KEYDOWN = SDL_KEYDOWN;
     public static KEYUP = SDL_KEYUP;
+    public static MOUSEMOTION = 1024;
+    public static MOUSEDOWN = 1025;
+    public static MOUSEUP = 1026;
 
     /**
      * 
      * @returns current event
      */
-    static get() : Event {
+    static get() {
         const event = new SDL_Event();
         SDL_PollEvent(event);
-        return new Event(event.event[0], event.event[5]);
+        return event;
     }
 
-    static handleEvent(event:Event) {
-        switch (event.type) {
+    static handleEvent(event: SDL_Event) {
+        switch (event.event[0]) {
             case Wave.event.QUIT:
                 Wave.running = false;
                 break;
             case Wave.event.KEYDOWN:
             case Wave.event.KEYUP:
-                Wave.keyboard.handleKey(event);
+                Wave.keyboard.handleKey(new Event(event.event[0], event.event[5]));
+                break;
+            case Wave.event.MOUSEDOWN:
+            case Wave.event.MOUSEUP:
+                Wave.mouse.handleMouseButton(new MouseButtonEvent(event.event[0], event.event[5], event.event[6], event.event[9], event.event[10]));
+                break;
+            case Wave.event.MOUSEMOTION:
+                Wave.mouse.handleMouseMotion(new MouseMotionEvent(event.event[0], event.event[5], event.event[6]));
                 break;
         }
     }
@@ -727,10 +765,18 @@ class WaveGraphics {
 
         if (img != null && texture != null) {    
             return new Drawable(t, img, texture);
+        } else {
+            if (img == null && texture == null) {
+                console.error("Failed to load both image and texture");
+            } else if (texture == null) {
+                console.error("Failed to load texture");
+            } else if (img == null) {
+                console.error("Failed to load image " + t);
+            } 
+            return null;
         }
 
-        console.error("Failed to load image " + t);
-        return null;
+        
     }
 
     /**
@@ -991,12 +1037,54 @@ class WaveKeyboard {
     }
 }
 
+class WaveMouse {
+    private static state = new Map<number, {state: boolean, clicks: number}>();
+    private static x = 0;
+    private static y = 0;
+
+    public static handleMouseButton(event: MouseButtonEvent) {
+        if (event.type == Wave.event.MOUSEDOWN) {
+            this.state.set(event.button, {state: true, clicks: event.clicks});
+        } else if (event.type == Wave.event.MOUSEUP) {
+            this.state.set(event.button, {state: false, clicks: event.clicks});
+        }
+    }
+
+    public static handleMouseMotion(event: MouseMotionEvent) {
+        this.x = event.xpos;
+        this.y = event.ypos;
+    }
+
+    public static isDown(button: number) {
+        if (this.state.get(button)?.state == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static isUp(button: number) {
+        if (this.state.get(button)?.state == false) {
+            return true;
+        } else if (this.state.get(button) == undefined) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static getPosition() {
+        return {x: this.x, y: this.y};
+    }
+}
+
 export class Wave {
 
     public static event = WaveEvent;
     public static graphics = WaveGraphics;
     public static clock = WaveClock;
     public static keyboard = WaveKeyboard;
+    public static mouse = WaveMouse;
 
     public static running = true;
 
@@ -1017,7 +1105,7 @@ export class Wave {
      */
     public static init() : void {
         SDL_Init(SDL_INIT_EVERYTHING);
-        IMG_Init(image_type.IMG_INIT_PNG + image_type.IMG_INIT_JPG);
+        IMG_Init(image_type.IMG_INIT_PNG);
         const mode = new Uint32Array(3);
         SDL_GetDesktopDisplayMode(0, mode);
         this.desktopWidth = mode[1];
@@ -1043,8 +1131,8 @@ export class Wave {
      * @returns 
      */
     public static createWindow(width: number, height: number) {
-        this.windowPointer = SDL_CreateWindow("title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
-        this.rendererPointer = SDL_CreateRenderer(this.windowPointer, -1, 0);
-        return new WaveWindow(this.windowPointer, width, height, "title");;
+        this.windowPointer = SDL_CreateWindow("Wave", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+        this.rendererPointer = SDL_CreateRenderer(this.windowPointer, -1, SDL_RENDERER_PRESENTVSYNC);
+        return new WaveWindow(this.windowPointer, width, height, "Wave");;
     }
 }

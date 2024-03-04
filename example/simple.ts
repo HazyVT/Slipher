@@ -1,7 +1,6 @@
 import { Wave } from "../index";
 
 function load() {
-    screen.setSize(1280, 720);
 }
 
 function update() {
@@ -13,6 +12,9 @@ function update() {
 function draw() {
     Wave.graphics.setColor(255,255,255,1);
     Wave.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
+
+    Wave.graphics.draw(Wave.graphics.newImage("./assets/floor.png"), 20, 20, 8, 8);
+    
 
     Wave.graphics.flip();
 }
