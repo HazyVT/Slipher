@@ -1041,18 +1041,29 @@ class WaveMouse {
     private static state = new Map<number, {state: boolean, clicks: number}>();
     private static x = 0;
     private static y = 0;
+    private static prevcheck = false;
 
     public static handleMouseButton(event: MouseButtonEvent) {
         if (event.type == Wave.event.MOUSEDOWN) {
             this.state.set(event.button, {state: true, clicks: event.clicks});
         } else if (event.type == Wave.event.MOUSEUP) {
             this.state.set(event.button, {state: false, clicks: event.clicks});
+            this.prevcheck = false;
         }
     }
 
     public static handleMouseMotion(event: MouseMotionEvent) {
         this.x = event.xpos;
         this.y = event.ypos;
+    }
+
+    public static isPressed(button: number) {
+        if (this.state.get(button)?.state == true && !this.prevcheck) {
+            this.prevcheck = true;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static isDown(button: number) {
