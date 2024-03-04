@@ -1,8 +1,8 @@
 import { dlopen, suffix } from 'bun:ffi';
 
-const path = `./lib/libSDL2.${suffix}`;
-const imagepath = `./lib/libSDL2_image-2.0.0.${suffix}`;
-const gfxpath = `./lib/libSDL2_gfx-1.0.0.${suffix}`;
+const path = import.meta.dir + `/lib/libSDL2.${suffix}`;
+const imagepath = import.meta.dir + `/lib/libSDL2_image-2.0.0.${suffix}`;
+const gfxpath = import.meta.dir + `/lib/libSDL2_gfx-1.0.0.${suffix}`;
 
 
 export const lib = dlopen(path, {

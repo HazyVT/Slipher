@@ -1,4 +1,4 @@
-import { gfx, image, lib } from "./src/sdl2";
+import { gfx, image, lib } from "./sdl2";
 import { type Pointer, ptr} from 'bun:ffi';
 
 /* SDL Constants */
