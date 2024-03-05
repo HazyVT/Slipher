@@ -694,13 +694,13 @@ export class Animation {
         destsrc[3] = height;
         const drawable = this.images.get(this.data[this.frame]);
         if (drawable != null) {
-            SDL_RenderCopyEx(Wave.rendererPointer, drawable!.texture, null, ptr(destsrc), r, null, f);
+            SDL_RenderCopyEx(Slipher.rendererPointer, drawable!.texture, null, ptr(destsrc), r, null, f);
         }
 
     }
 }
 
-class WaveClock {
+class SlipherClock {
     private static dt : number = 0;
     private static last = 0;
     private static now = SDL_GetPerformanceCounter();
@@ -724,7 +724,7 @@ class WaveClock {
 
 }
 
-class WaveEvent {
+class SlipherEvent {
 
     public static QUIT = SDL_QUIT;
     public static KEYDOWN = SDL_KEYDOWN;
@@ -746,25 +746,25 @@ class WaveEvent {
 
     static handleEvent(event: SDL_Event) {
         switch (event.event[0]) {
-            case Wave.event.QUIT:
-                Wave.running = false;
+            case Slipher.event.QUIT:
+                Slipher.running = false;
                 break;
-            case Wave.event.KEYDOWN:
-            case Wave.event.KEYUP:
-                Wave.keyboard.handleKey(new Event(event.event[0], event.event[5]));
+            case Slipher.event.KEYDOWN:
+            case Slipher.event.KEYUP:
+                Slipher.keyboard.handleKey(new Event(event.event[0], event.event[5]));
                 break;
-            case Wave.event.MOUSEDOWN:
-            case Wave.event.MOUSEUP:
-                Wave.mouse.handleMouseButton(new MouseButtonEvent(event.event[0], event.event[5], event.event[6], event.event[4], event.event[10]));
+            case Slipher.event.MOUSEDOWN:
+            case Slipher.event.MOUSEUP:
+                Slipher.mouse.handleMouseButton(new MouseButtonEvent(event.event[0], event.event[5], event.event[6], event.event[4], event.event[10]));
                 break;
-            case Wave.event.MOUSEMOTION:
-                Wave.mouse.handleMouseMotion(new MouseMotionEvent(event.event[0], event.event[5], event.event[6]));
+            case Slipher.event.MOUSEMOTION:
+                Slipher.mouse.handleMouseMotion(new MouseMotionEvent(event.event[0], event.event[5], event.event[6]));
                 break;
         }
     }
 }
 
-class WaveGraphics {
+class SlipherGraphics {
 
     /**
      * Creates a new drawable from the path given
@@ -774,7 +774,7 @@ class WaveGraphics {
      */
     static newImage(path: string) {
         const img = IMG_Load(path);
-        const texture = SDL_CreateTextureFromSurface(Wave.rendererPointer, img);
+        const texture = SDL_CreateTextureFromSurface(Slipher.rendererPointer, img);
         const path_split = path.split('/');
         const t = path_split[path_split.length - 1].replace(".png", "");
 
@@ -813,7 +813,7 @@ class WaveGraphics {
         destsrc[1] = y;
         destsrc[2] = width;
         destsrc[3] = height;
-        SDL_RenderCopyEx(Wave.rendererPointer, drawable.texture, null, ptr(destsrc), r, null, f);
+        SDL_RenderCopyEx(Slipher.rendererPointer, drawable.texture, null, ptr(destsrc), r, null, f);
     }
 
     /**
@@ -821,7 +821,7 @@ class WaveGraphics {
      * Make sure to call before drawing anything
      */
     static clear() : void {
-        SDL_RenderClear(Wave.rendererPointer);
+        SDL_RenderClear(Slipher.rendererPointer);
     }
 
     /**
@@ -841,9 +841,9 @@ class WaveGraphics {
         rect[3] = height;
 
         if (mode == 'fill') {
-            SDL_RenderFillRect(Wave.rendererPointer, ptr(rect));
+            SDL_RenderFillRect(Slipher.rendererPointer, ptr(rect));
         } else if (mode == 'line') {
-            SDL_RenderDrawRect(Wave.rendererPointer, ptr(rect));
+            SDL_RenderDrawRect(Slipher.rendererPointer, ptr(rect));
         }
 
     }
@@ -852,7 +852,7 @@ class WaveGraphics {
      * Method to actually draw everything to the screen
      */
     static flip() : void {
-        SDL_RenderPresent(Wave.rendererPointer);
+        SDL_RenderPresent(Slipher.rendererPointer);
     }
 
     /**
@@ -866,7 +866,7 @@ class WaveGraphics {
      * @param alpha value of alpha
      */
     static setColor(red: number, green: number, blue: number, alpha: number) : void {
-        SDL_SetRenderDrawColor(Wave.rendererPointer, red, green, blue, alpha);
+        SDL_SetRenderDrawColor(Slipher.rendererPointer, red, green, blue, alpha);
     }
     
     /**
@@ -886,7 +886,7 @@ class WaveGraphics {
             const animation_frame_id = animation_name + "_" + n.toString();
             let image_loc = path + `/` + animation_frame_id + ".png";
             image_loc = image_loc.replace('\\', '/');
-            const image = Wave.graphics.newImage(image_loc);
+            const image = Slipher.graphics.newImage(image_loc);
             if (image != null) {
                 animation_frames.set(image.name, image);
                 for (let i = 0; i < frame_duration; i++) {
@@ -903,17 +903,17 @@ class WaveGraphics {
         color[1] = 0;
         color[2] = 0;
         color[3] = 255;
-        const surf  = TTF_RenderText_Solid(Wave.font, text, color);
-        const tex = SDL_CreateTextureFromSurface(Wave.rendererPointer, surf);
+        const surf  = TTF_RenderText_Solid(Slipher.font, text, color);
+        const tex = SDL_CreateTextureFromSurface(Slipher.rendererPointer, surf);
         const w = new Uint32Array(1);
         const h = new Uint32Array(1);
-        TTF_SizeText(Wave.font, text, w, h);
+        TTF_SizeText(Slipher.font, text, w, h);
         const destsrc = new Uint32Array(4);
         destsrc[0] = x;
         destsrc[1] = y;
         destsrc[2] = w[0];
         destsrc[3] = h[0];
-        SDL_RenderCopyEx(Wave.rendererPointer, tex, null, ptr(destsrc), 0, null, 0);
+        SDL_RenderCopyEx(Slipher.rendererPointer, tex, null, ptr(destsrc), 0, null, 0);
         
     }
 }
@@ -977,7 +977,7 @@ class WaveWindow {
     setSize(width: number, height: number) {
         SDL_SetWindowSize(this.pointer, width, height);
 
-        SDL_SetWindowPosition(this.pointer, Wave.desktopWidth / 2 - (width / 2), Wave.deskopHeight / 2 - (height / 2));
+        SDL_SetWindowPosition(this.pointer, Slipher.desktopWidth / 2 - (width / 2), Slipher.deskopHeight / 2 - (height / 2));
         
         this.width = width;
         this.height = height;
@@ -1016,13 +1016,13 @@ class WaveWindow {
     }
 
     capFrameRate(tick: number) {
-        if ((1000 / this.framerate) > Wave.clock.tick() - tick) {
-            SDL_Delay(1000 / this.framerate - (Wave.clock.tick() - tick));
+        if ((1000 / this.framerate) > Slipher.clock.tick() - tick) {
+            SDL_Delay(1000 / this.framerate - (Slipher.clock.tick() - tick));
         }
     }
 }
 
-class WaveKeyboard {
+class SlipherKeyboard {
 
     private static state = new Map<number, boolean>();
 
@@ -1070,7 +1070,7 @@ class WaveKeyboard {
     }
 }
 
-class WaveMouse {
+class SlipherMouse {
     private static state = new Map<string, boolean>([
         ['MOUSELEFT', false],
         ['MOUSERIGHT', false],
@@ -1090,7 +1090,7 @@ class WaveMouse {
 
 
     public static handleMouseButton(event: MouseButtonEvent) {
-        if (event.type == Wave.event.MOUSEDOWN) {
+        if (event.type == Slipher.event.MOUSEDOWN) {
             switch(event.button) {
                 case this.mouseLeftDown:
                     this.state.set('MOUSELEFT', true);
@@ -1102,7 +1102,7 @@ class WaveMouse {
                     this.state.set('MOUSEMIDDLE', true);
                     break;
             }
-        } else if (event.type == Wave.event.MOUSEUP) {
+        } else if (event.type == Slipher.event.MOUSEUP) {
             switch(event.button) {
                 case this.mouseLeftUp:
                     this.state.set('MOUSELEFT', false);
@@ -1155,13 +1155,13 @@ class WaveMouse {
     }
 }
 
-export class Wave {
+export class Slipher {
 
-    public static event = WaveEvent;
-    public static graphics = WaveGraphics;
-    public static clock = WaveClock;
-    public static keyboard = WaveKeyboard;
-    public static mouse = WaveMouse;
+    public static event = SlipherEvent;
+    public static graphics = SlipherGraphics;
+    public static clock = SlipherClock;
+    public static keyboard = SlipherKeyboard;
+    public static mouse = SlipherMouse;
 
     public static running = true;
 

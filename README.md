@@ -1,8 +1,8 @@
-# Wave
+# Slipher
 
-A game framework made for typescript using bun and SDL2.
+A game framework made for typescript using bun and SDL2. The engine is named after my favorite Yu-Gi-Oh! card. Slipher the sky dragon.
 
-## Wave is not yet ready Please do not use until ready.
+### Slipher is not yet ready Please do not use until ready.
 
 |Feature|Windows|Mac|Linux|
 |:-------|--------|--------|-----:|
@@ -16,39 +16,41 @@ A game framework made for typescript using bun and SDL2.
 |Proper Building| &check;|&cross;|-|
 |All Graphic functions implemented| &cross;|&cross;|-|
 |Audio Handler| &cross;|&cross;|-|
-|Drawing Text| &cross;|&cross;|-|
+|Drawing Text| &check;|&cross;|-|
+|Mouse Handler| &check; | &cross;| -|
 
 
 ### Simple Example Code
 
 ```ts
-import { Wave } from "wave";
+import { Slipher } from "../index";
 
 function load() {
-    screen.setSize(1280, 720);
 }
 
 function update() {
-    const event = Wave.event.get();
+    const event = Slipher.event.get();
 
-    Wave.event.handleEvent(event);
+    Slipher.event.handleEvent(event);
 }
 
 function draw() {
-    Wave.graphics.setColor(255,255,255,1);
-    Wave.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
+    Slipher.graphics.setColor(255,255,255,1);
+    Slipher.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
 
-    Wave.graphics.flip();
+    Slipher.graphics.print("Hello World!", 20, 20);    
+
+    Slipher.graphics.flip();
 }
 
-Wave.init();
-const screen = Wave.createWindow(640, 480);
+Slipher.init();
+const screen = Slipher.createWindow(640, 480);
 load();
 
-while(Wave.running) {
+while(Slipher.running) {
     update();
     draw();
 }
 
-Wave.quit();
+Slipher.quit();
 ```

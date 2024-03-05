@@ -1,4 +1,4 @@
-import { Wave, Animation } from '../index';
+import { Slipher, Animation } from '../index';
 
 let x = 40, y = 40;
 
@@ -20,26 +20,26 @@ const change_action = (action: string, new_action: string) => {
 
 function load() {
     screen.setIcon("./assets/butterfly.png")
-    idleAnim = Wave.graphics.createAnimation("./assets/idle", 8, 8);
-    walkAnim = Wave.graphics.createAnimation("./assets/walk", 8, 8);
+    idleAnim = Slipher.graphics.createAnimation("./assets/idle", 8, 8);
+    walkAnim = Slipher.graphics.createAnimation("./assets/walk", 8, 8);
 }
 
 function update() {
-    const event = Wave.event.get();
-    const tick = Wave.clock.tick();
+    const event = Slipher.event.get();
+    const tick = Slipher.clock.tick();
 
-    Wave.event.handleEvent(event);
+    Slipher.event.handleEvent(event);
 
-    if (Wave.keyboard.isDown('K_a') && (Wave.keyboard.isDown('K_d'))) {
+    if (Slipher.keyboard.isDown('K_a') && (Slipher.keyboard.isDown('K_d'))) {
         velocity.x = 0;
         const newact = change_action(action, "idle");
         action = newact.action;
-    } else if (Wave.keyboard.isDown('K_a')) {
+    } else if (Slipher.keyboard.isDown('K_a')) {
         velocity.x = -4;
         const newact = change_action(action, "walk");
         action = newact.action;
         flip = true;
-    } else if (Wave.keyboard.isDown('K_d')) {
+    } else if (Slipher.keyboard.isDown('K_d')) {
         velocity.x = 4;
         const newact = change_action(action, "walk");
         action = newact.action;
@@ -50,8 +50,8 @@ function update() {
         action = newact.action;
     }
 
-    if (Wave.keyboard.isDown('K_ESCAPE')) {
-        Wave.running = false;
+    if (Slipher.keyboard.isDown('K_ESCAPE')) {
+        Slipher.running = false;
     }
 
     if (action == "walk") {
@@ -69,10 +69,10 @@ function update() {
 
 function draw() {
 
-    Wave.graphics.clear();
-    Wave.graphics.setColor(70,130,170,1);
-    Wave.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
-    Wave.graphics.setColor(255,255,255,1);
+    Slipher.graphics.clear();
+    Slipher.graphics.setColor(70,130,170,1);
+    Slipher.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
+    Slipher.graphics.setColor(255,255,255,1);
     
     if (action == "walk") {
         walkAnim.draw(x,y,516,516,0,flip);
@@ -80,18 +80,18 @@ function draw() {
         idleAnim.draw(x,y,516,516,0,flip);
     }
 
-    Wave.graphics.pixel(20, 20, 255, 255, 0, 255);
+    Slipher.graphics.pixel(20, 20, 255, 255, 0, 255);
 
-   Wave.graphics.flip();
+   Slipher.graphics.flip();
 
 }
 
-const screen = Wave.createWindow(1280, 720);
+const screen = Slipher.createWindow(1280, 720);
 load();
 
-while (Wave.running) {
+while (Slipher.running) {
     update();
     draw();
 }
 
-Wave.quit();
+Slipher.quit();

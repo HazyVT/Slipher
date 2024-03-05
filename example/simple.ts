@@ -1,31 +1,31 @@
-import { Wave } from "../index";
+import { Slipher } from "../index";
 
 function load() {
 }
 
 function update() {
-    const event = Wave.event.get();
+    const event = Slipher.event.get();
 
-    Wave.event.handleEvent(event);
+    Slipher.event.handleEvent(event);
 }
 
 function draw() {
-    Wave.graphics.setColor(255,255,255,1);
-    Wave.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
+    Slipher.graphics.setColor(255,255,255,1);
+    Slipher.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
 
-    Wave.graphics.draw(Wave.graphics.newImage("./assets/floor.png"), 20, 20, 8, 8);
+    Slipher.graphics.draw(Slipher.graphics.newImage("./assets/floor.png"), 20, 20, 8, 8);
     
 
-    Wave.graphics.flip();
+    Slipher.graphics.flip();
 }
 
-Wave.init();
-const screen = Wave.createWindow(640, 480);
+Slipher.init();
+const screen = Slipher.createWindow(640, 480);
 load();
 
-while(Wave.running) {
+while(Slipher.running) {
     update();
     draw();
 }
 
-Wave.quit();
+Slipher.quit();
