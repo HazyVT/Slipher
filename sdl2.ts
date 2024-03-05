@@ -3,6 +3,7 @@ import { dlopen, suffix } from 'bun:ffi';
 const path = import.meta.dir + `/lib/libSDL2.${suffix}`;
 const imagepath = import.meta.dir + `/lib/libSDL2_image-2.0.0.${suffix}`;
 const gfxpath = import.meta.dir + `/lib/libSDL2_gfx-1.0.0.${suffix}`;
+const ttfpath = import.meta.dir + `/lib/libSDL2_ttf.${suffix}`;
 
 
 export const lib = dlopen(path, {
@@ -166,6 +167,25 @@ export const gfx = dlopen(gfxpath, {
     },
     pixelRGBA: {
         args: ["pointer", "int", "int", "int", "int", "int", "int"],
+        returns: "int"
+    }
+})
+
+export const ttf = dlopen(ttfpath, {
+    TTF_OpenFont: {
+        args: ["cstring", 'int'],
+        returns: "pointer"
+    },
+    TTF_RenderText_Solid: {
+        args: ["pointer", "cstring", "uint32_t"],
+        returns: "pointer"
+    },
+    TTF_Init: {
+        args: [],
+        returns: "int"
+    },
+    TTF_SizeText: {
+        args: ["pointer", "cstring", "pointer", "pointer"],
         returns: "int"
     }
 })

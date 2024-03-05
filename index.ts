@@ -1,4 +1,4 @@
-import { gfx, image, lib } from "./sdl2";
+import { gfx, image, lib, ttf } from "./sdl2";
 import { type Pointer, ptr} from 'bun:ffi';
 
 /* SDL Constants */
@@ -56,6 +56,7 @@ type SDL_Surface = Pointer | null;
 type SDL_Texture = Pointer | null;
 type SDL_Rect = Pointer | null;
 type SDL_Point = Pointer | null;
+type TTF_Font = Pointer | null;
 
 /* SDL Classes */
 
@@ -103,6 +104,11 @@ const SDL_GetTicks = () : number => lib.symbols.SDL_GetTicks();
 const SDL_getFramerate = (manager: Uint32Array) : number => gfx.symbols.SDL_getFramerate(ptr(manager));
 const SDL_initFramerate = (manager: Uint32Array) : void => gfx.symbols.SDL_initFramerate(ptr(manager));
 const SDL_setFramerate = (manager: Uint32Array, rate: number) : number => gfx.symbols.SDL_setFramerate(ptr(manager), rate);
+
+const TTF_OpenFont = (path: string, ptsize: number) : TTF_Font => ttf.symbols.TTF_OpenFont(Buffer.from(path + "\x00"), ptsize);
+const TTF_RenderText_Solid = (font: TTF_Font, text: string, color: Uint32Array) : SDL_Surface => ttf.symbols.TTF_RenderText_Solid(font, Buffer.from(text + "\x00"), color);
+const TTF_Init = () : number => ttf.symbols.TTF_Init();
+const TTF_SizeText = (font: TTF_Font, text: string, width: Uint32Array, height: Uint32Array) : number => ttf.symbols.TTF_SizeText(font, Buffer.from(text + "\x00"), ptr(width), ptr(height));
 
 const pixelRGBA = (renderer: SDL_Renderer, x: number, y: number, r: number, b: number, g: number, a: number) : number => gfx.symbols.pixelRGBA(renderer, x, y, r, g, b, a);
 const pixelColor = (renderer: SDL_Renderer, x: number, y: number, color: string) : number => gfx.symbols.pixelColor(renderer, x, y, Number(color));
@@ -891,24 +897,42 @@ class WaveGraphics {
         return new Animation(animation_frames, animation_frame_data);
     }
 
-    private static checkhex(hex: string) {
-        if (hex.length == 1) {
-            return hex.padStart(2, '0');
-        } else {
-            return hex;
-        }
-    }
-
-    /* Primitive shape rendering */
-    static pixel(x: number, y: number, red: number, green: number, blue: number, alpha: number) {
-        const rhex = this.checkhex(red.toString(16));
-        const ghex = this.checkhex(green.toString(16));
-        const bhex = this.checkhex(blue.toString(16));
-        const ahex = this.checkhex(alpha.toString(16));
-        const color = "0x" + rhex + ghex + bhex + ahex;
-        pixelColor(Wave.rendererPointer, x, y, color);
+    static print(text: string, x: number, y: number) {
+        const color = new Uint32Array(4);
+        color[0] = 0;
+        color[1] = 0;
+        color[2] = 0;
+        color[3] = 255;
+        const surf  = TTF_RenderText_Solid(Wave.font, text, color);
+        const tex = SDL_CreateTextureFromSurface(Wave.rendererPointer, surf);
+        const w = new Uint32Array(1);
+        const h = new Uint32Array(1);
+        TTF_SizeText(Wave.font, text, w, h);
+        const destsrc = new Uint32Array(4);
+        destsrc[0] = x;
+        destsrc[1] = y;
+        destsrc[2] = w[0];
+        destsrc[3] = h[0];
+        SDL_RenderCopyEx(Wave.rendererPointer, tex, null, ptr(destsrc), 0, null, 0);
+        
     }
 }
+
+export class SDL_Ssurface {
+
+    public surface : Uint32Array;
+    private pointer;
+
+    constructor() {
+        this.surface = new Uint32Array(32);
+        this.pointer = ptr(this.surface);
+    }
+
+    getPointer() {
+        return this.pointer;
+    }
+}
+
 
 class WaveWindow {
     private pointer: SDL_Window;
@@ -1144,6 +1168,8 @@ export class Wave {
     public static desktopWidth = 0;
     public static deskopHeight = 0;
 
+    public static font: TTF_Font;
+
     /**
      * Pointer of window. Please never touch this.
      */
@@ -1159,6 +1185,8 @@ export class Wave {
     public static init() : void {
         SDL_Init(SDL_INIT_EVERYTHING);
         IMG_Init(image_type.IMG_INIT_PNG);
+        TTF_Init();
+        this.font = TTF_OpenFont(import.meta.dir + '/font/arial.ttf', 14);
         const mode = new Uint32Array(3);
         SDL_GetDesktopDisplayMode(0, mode);
         this.desktopWidth = mode[1];
