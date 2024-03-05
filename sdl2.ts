@@ -18,10 +18,6 @@ export const lib = dlopen(path, {
         args: ["ptr"],
         returns: "ptr"
     },
-    SDL_FreeSurface: {
-        args: ["ptr"],
-        returns: "void"
-    },
     SDL_DestroyWindow: {
         args: ["ptr"],
         returns: "void"
