@@ -832,19 +832,24 @@ class SlipherGraphics {
      * @param y left position of rectangle
      * @param width width of rectangle
      * @param height height of rectangle
+     * @param red 0 - 255
+     * @param green 0 - 255
+     * @param blue 0 - 255
+     * @param alpha 0 - 1
      */
-    static rectangle(mode: 'fill' | 'line', x: number, y: number, width: number, height: number) : void {
+    static rectangle(mode: 'fill' | 'line', x: number, y: number, width: number, height: number, red: number, green: number, blue: number) : void {
         const rect = new Uint32Array(4);
         rect[0] = x;
         rect[1] = y;
         rect[2] = width;
         rect[3] = height;
-
+        SDL_SetRenderDrawColor(Slipher.rendererPointer, red, green, blue, 1);
         if (mode == 'fill') {
             SDL_RenderFillRect(Slipher.rendererPointer, ptr(rect));
         } else if (mode == 'line') {
             SDL_RenderDrawRect(Slipher.rendererPointer, ptr(rect));
         }
+        SDL_SetRenderDrawColor(Slipher.rendererPointer, 0, 0, 0, 1);
 
     }
 
@@ -917,22 +922,6 @@ class SlipherGraphics {
         
     }
 }
-
-export class SDL_Ssurface {
-
-    public surface : Uint32Array;
-    private pointer;
-
-    constructor() {
-        this.surface = new Uint32Array(32);
-        this.pointer = ptr(this.surface);
-    }
-
-    getPointer() {
-        return this.pointer;
-    }
-}
-
 
 class WaveWindow {
     private pointer: SDL_Window;
