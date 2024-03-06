@@ -1,15 +1,19 @@
-import { Slipher, Animation } from '../index';
+import { Slipher, Animation, Drawable } from '../index';
 
-let x = 40, y = 40;
+let x = 300, y = 346;
 
 let action = 'idle';
 let flip = false;
 let velocity = {x: 0, y: 0};
 
-let time = 0;
+let npcstate = 'wait';
 
 let idleAnim: Animation;
 let walkAnim: Animation;
+let npcwaitAnim: Animation;
+let npctalkAnim: Animation;
+
+let room: Drawable;
 
 const change_action = (action: string, new_action: string) => {
     if (action != new_action) {
@@ -22,6 +26,12 @@ function load() {
     screen.setIcon("./assets/butterfly.png")
     idleAnim = Slipher.graphics.createAnimation("./assets/idle", 8, 8);
     walkAnim = Slipher.graphics.createAnimation("./assets/walk", 8, 8);
+    npcwaitAnim = Slipher.graphics.createAnimation("./assets/wait", 8, 6);
+    npctalkAnim = Slipher.graphics.createAnimation("./assets/talk", 8, 7);
+    const tempr = Slipher.graphics.newImage("./assets/map.png");
+    if (tempr != null) {
+        room = tempr;
+    }
 }
 
 function update() {
@@ -30,17 +40,17 @@ function update() {
 
     Slipher.event.handleEvent(event);
 
-    if (Slipher.keyboard.isDown('K_a') && (Slipher.keyboard.isDown('K_d'))) {
+    if (Slipher.keyboard.isDown('a') && (Slipher.keyboard.isDown('d'))) {
         velocity.x = 0;
         const newact = change_action(action, "idle");
         action = newact.action;
-    } else if (Slipher.keyboard.isDown('K_a')) {
-        velocity.x = -4;
+    } else if (Slipher.keyboard.isDown('a')) {
+        velocity.x = -2;
         const newact = change_action(action, "walk");
         action = newact.action;
         flip = true;
-    } else if (Slipher.keyboard.isDown('K_d')) {
-        velocity.x = 4;
+    } else if (Slipher.keyboard.isDown('d')) {
+        velocity.x = 2;
         const newact = change_action(action, "walk");
         action = newact.action;
         flip = false;
@@ -50,7 +60,13 @@ function update() {
         action = newact.action;
     }
 
-    if (Slipher.keyboard.isDown('K_ESCAPE')) {
+    if (x >= 440 && x <= 480) {
+        if (Slipher.keyboard.isDown("z") && npcstate == "wait") {
+            npcstate = "talk";
+        }
+    }
+
+    if (Slipher.keyboard.isDown('ESCAPE')) {
         Slipher.running = false;
     }
 
@@ -63,6 +79,12 @@ function update() {
     x += velocity.x;
     y += velocity.y;
 
+    if (npcstate == "talk") {
+        npctalkAnim.update();
+    } else {
+        npcwaitAnim.update();
+    }
+    
     screen.capFrameRate(tick);
 
 }
@@ -70,22 +92,31 @@ function update() {
 function draw() {
 
     Slipher.graphics.clear();
-    Slipher.graphics.setColor(70,130,170,1);
-    Slipher.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
-    Slipher.graphics.setColor(255,255,255,1);
+
+
+    Slipher.graphics.rectangle('fill', 0, 0, 1280, 720, 255, 255, 255);
+
+    Slipher.graphics.draw(room, (screen.getWidth() / 2) - 240, (screen.getHeight() / 2) - 120, 480, 240);
+
+    if (npcstate == "talk") {
+        npctalkAnim.draw(500, 346, 124, 124, 0, true)
+    } else {
+        npcwaitAnim.draw(500, 346, 124, 124, 0, true);
+    }
     
     if (action == "walk") {
-        walkAnim.draw(x,y,516,516,0,flip);
+        walkAnim.draw(x,y,124,124,0,flip);
     } else {
-        idleAnim.draw(x,y,516,516,0,flip);
+        idleAnim.draw(x,y,124,124,0,flip);
     }
 
-    Slipher.graphics.pixel(20, 20, 255, 255, 0, 255);
+    Slipher.graphics.print("Hello World!", 20, 20, 255, 0, 0)
 
    Slipher.graphics.flip();
 
 }
 
+Slipher.init();
 const screen = Slipher.createWindow(1280, 720);
 load();
 

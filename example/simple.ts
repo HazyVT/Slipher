@@ -10,11 +10,10 @@ function update() {
 }
 
 function draw() {
-    Slipher.graphics.setColor(255,255,255,1);
-    Slipher.graphics.rectangle('fill', 0, 0, screen.getWidth(), screen.getHeight());
 
-    Slipher.graphics.draw(Slipher.graphics.newImage("./assets/floor.png"), 20, 20, 8, 8);
+    Slipher.graphics.rectangle('fill', 0, 0, 640, 480, 255, 255, 255);
     
+    Slipher.graphics.print("Hello World", 20, 20,)
 
     Slipher.graphics.flip();
 }

@@ -904,10 +904,10 @@ class SlipherGraphics {
 
     static print(text: string, x: number, y: number) {
         const color = new Uint32Array(4);
-        color[0] = 0;
+        color[0] = 255;
         color[1] = 0;
         color[2] = 0;
-        color[3] = 255;
+        color[3] = 1;
         const surf  = TTF_RenderText_Solid(Slipher.font, text, color);
         const tex = SDL_CreateTextureFromSurface(Slipher.rendererPointer, surf);
         const w = new Uint32Array(1);
@@ -1172,9 +1172,15 @@ export class Slipher {
      * Method to initialize wave.
      */
     public static init() : void {
-        SDL_Init(SDL_INIT_EVERYTHING);
-        IMG_Init(image_type.IMG_INIT_PNG);
-        TTF_Init();
+        if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+            console.error("SDL failed to init")
+        };
+        if (IMG_Init(image_type.IMG_INIT_PNG) != 0) {
+            console.error("IMG failed to init")
+        };
+        if (TTF_Init() != 0) {
+            console.error("TTF failed to init")
+        };
         this.font = TTF_OpenFont(import.meta.dir + '/font/arial.ttf', 14);
         const mode = new Uint32Array(3);
         SDL_GetDesktopDisplayMode(0, mode);
