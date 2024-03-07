@@ -1014,6 +1014,7 @@ class WaveWindow {
 class SlipherKeyboard {
 
     private static state = new Map<number, boolean>();
+    private static prevcheck = false;
 
     /**
      * Method to handle all key events
@@ -1025,6 +1026,7 @@ class SlipherKeyboard {
             this.state.set(event.value, true);
         } else if (event.type == SDL_KEYUP) {
             this.state.set(event.value, false);
+            this.prevcheck = false;
         }
     }
 
@@ -1036,6 +1038,15 @@ class SlipherKeyboard {
      */
     public static isDown(key: keys) : boolean {
         if (this.state.get(keyMap.get(key)!) != undefined && this.state.get(keyMap.get(key)!) == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static isPressed(key: keys) : boolean {
+        if (this.state.get(keyMap.get(key)!) == true && this.prevcheck == false) {
+            this.prevcheck = true;
             return true;
         } else {
             return false;

@@ -1,12 +1,16 @@
 import { Slipher, Animation, Drawable } from '../index';
 
-let x = 300, y = 346;
-
-let action = 'idle';
-let flip = false;
+let x = 380, y = 387;
 let velocity = {x: 0, y: 0};
+let time = 0;
 
-let npcstate = 'wait';
+let flip = false;
+
+let npcstate = false;
+let action = 'idle';
+const string = "So what exactly are you doing in my house?";
+
+
 
 let idleAnim: Animation;
 let walkAnim: Animation;
@@ -20,6 +24,14 @@ const change_action = (action: string, new_action: string) => {
         action = new_action;
     }
     return {action: action};
+}
+
+const draw_text = () => {
+    if (time < string.length) {
+        time += 0.2;
+    }
+    Slipher.graphics.rectangle('fill', 420, 260, 440, 60, 255,255,255);
+    Slipher.graphics.print(string.substring(0, Math.floor(time)), 440, 270);
 }
 
 function load() {
@@ -40,29 +52,40 @@ function update() {
 
     Slipher.event.handleEvent(event);
 
-    if (Slipher.keyboard.isDown('a') && (Slipher.keyboard.isDown('d'))) {
-        velocity.x = 0;
-        const newact = change_action(action, "idle");
-        action = newact.action;
-    } else if (Slipher.keyboard.isDown('a')) {
-        velocity.x = -2;
-        const newact = change_action(action, "walk");
-        action = newact.action;
-        flip = true;
-    } else if (Slipher.keyboard.isDown('d')) {
-        velocity.x = 2;
-        const newact = change_action(action, "walk");
-        action = newact.action;
-        flip = false;
-    } else {
-        velocity.x = 0;
-        const newact = change_action(action, "idle");
-        action = newact.action;
+    if (!npcstate) {
+        if (Slipher.keyboard.isDown('a') && (Slipher.keyboard.isDown('d'))) {
+            velocity.x = 0;
+            const newact = change_action(action, "idle");
+            action = newact.action;
+        } else if (Slipher.keyboard.isDown('a')) {
+            velocity.x = -2;
+            const newact = change_action(action, "walk");
+            action = newact.action;
+            flip = true;
+        } else if (Slipher.keyboard.isDown('d')) {
+            velocity.x = 2;
+            const newact = change_action(action, "walk");
+            action = newact.action;
+            flip = false;
+        } else {
+            velocity.x = 0;
+            const newact = change_action(action, "idle");
+            action = newact.action;
+        }
+    }
+
+    if (x <= 360) {
+        x = 360;
+    } else if (x >= 790) {
+        x = 790;
     }
 
     if (x >= 440 && x <= 480) {
-        if (Slipher.keyboard.isDown("z") && npcstate == "wait") {
-            npcstate = "talk";
+        if (Slipher.keyboard.isPressed('z')) {
+            time = 0;
+            velocity.x = 0;
+            action = "idle";
+            npcstate = !npcstate;
         }
     }
 
@@ -79,7 +102,7 @@ function update() {
     x += velocity.x;
     y += velocity.y;
 
-    if (npcstate == "talk") {
+    if (npcstate) {
         npctalkAnim.update();
     } else {
         npcwaitAnim.update();
@@ -94,14 +117,16 @@ function draw() {
     Slipher.graphics.clear();
 
 
-    Slipher.graphics.rectangle('fill', 0, 0, 1280, 720, 255, 255, 255);
+    //Slipher.graphics.rectangle('fill', 0, 0, 1280, 720, 255, 255, 255);
 
     Slipher.graphics.draw(room, (screen.getWidth() / 2) - 240, (screen.getHeight() / 2) - 120, 480, 240);
 
-    if (npcstate == "talk") {
-        npctalkAnim.draw(500, 346, 124, 124, 0, true)
+    if (npcstate) {
+        npctalkAnim.draw(500, 387, 124, 124, 0, true);
+        draw_text();
+        //Slipher.graphics.print("Hello World!", 420, 350);
     } else {
-        npcwaitAnim.draw(500, 346, 124, 124, 0, true);
+        npcwaitAnim.draw(500, 387, 124, 124, 0, true);
     }
     
     if (action == "walk") {
@@ -110,7 +135,6 @@ function draw() {
         idleAnim.draw(x,y,124,124,0,flip);
     }
 
-    Slipher.graphics.print("Hello World!", 20, 20, 255, 0, 0)
 
    Slipher.graphics.flip();
 

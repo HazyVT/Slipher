@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "build": "bun run src/build.ts && bun build main.ts --minify --compile --outfile ./out/main",
+    "build": "bun run build.ts && bun build ./example/movement_and_animation.ts --minify --compile --outfile ./out/main",
     "winfix": "editbin /subsystem:windows ./out/main.exe"
   },
   "type": "module"
