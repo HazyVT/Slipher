@@ -16,13 +16,10 @@ let localfontdir = "";
 if (os == "win32") {
     splitdir = dir.split("\\node_modules");
     console.log(splitdir);
-    if (splitdir.length == 1) {
-        splitdir = dir.split("\\src");
-    }
     outdir = splitdir[0] + "\\out";
     outassetsdir = outdir + "\\assets";
     outlibdir = outdir + "\\lib";
-    locallibdir = splitdir[0] + "\\lib";
+    locallibdir = import.meta.dir + "\\lib";
     outfontdir = outdir + "\\font";
     localfontdir = splitdir[0] + "\\font";
 
@@ -30,13 +27,10 @@ if (os == "win32") {
 } else {
     splitdir = dir.split("/node_modules");
     console.log(splitdir);
-    if (splitdir.length == 1) {
-        splitdir = dir.split("/src");
-    }
     outdir = splitdir[0] + "/out";
     outassetsdir = outdir + "/assets";
     outlibdir = outdir + "/lib";
-    locallibdir = splitdir[0] + "/lib";
+    locallibdir = import.meta.dir + "/lib";
     outfontdir = outdir + "/font";
     localfontdir = splitdir[0] + "/font";
 }
