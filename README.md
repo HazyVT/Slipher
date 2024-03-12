@@ -1,6 +1,6 @@
 # Slipher
 
-A game framework made for typescript using bun and SDL2. The engine is named after my favorite Yu-Gi-Oh! card. Slipher the sky dragon.
+A game framework made for typescript using bun and SDL2. 
 
 ### Slipher is not yet ready Please do not use until ready.
 

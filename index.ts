@@ -97,7 +97,6 @@ const SDL_SetWindowTitle = (window: SDL_Window, title: string) : void => lib.sym
 const SDL_SetWindowSize = (window: SDL_Window, width: number, height: number) : void => lib.symbols.SDL_SetWindowSize(window, width, height);
 const SDL_SetWindowPosition = (window: SDL_Window, x: number, y: number) : void => lib.symbols.SDL_SetWindowPosition(window, x, y);;
 const SDL_GetDesktopDisplayMode = (index: number, mode: Uint32Array) : number => lib.symbols.SDL_GetDesktopDisplayMode(index, ptr(mode));
-const SDL_RenderDrawPoint = (renderer: SDL_Renderer, x: number, y: number) : number => lib.symbols.SDL_RenderDrawPoint(renderer, x, y);
 const SDL_Delay = (ms: number) : void => lib.symbols.SDL_Delay(ms);
 const SDL_GetTicks = () : number => lib.symbols.SDL_GetTicks();
 
@@ -109,10 +108,6 @@ const TTF_OpenFont = (path: string, ptsize: number) : TTF_Font => ttf.symbols.TT
 const TTF_RenderText_Solid = (font: TTF_Font, text: string, color: number) : SDL_Surface => ttf.symbols.TTF_RenderText_Solid(font, Buffer.from(text + "\x00"), color);
 const TTF_Init = () : number => ttf.symbols.TTF_Init();
 const TTF_SizeText = (font: TTF_Font, text: string, width: Uint32Array, height: Uint32Array) : number => ttf.symbols.TTF_SizeText(font, Buffer.from(text + "\x00"), ptr(width), ptr(height));
-
-const pixelRGBA = (renderer: SDL_Renderer, x: number, y: number, r: number, b: number, g: number, a: number) : number => gfx.symbols.pixelRGBA(renderer, x, y, r, g, b, a);
-const pixelColor = (renderer: SDL_Renderer, x: number, y: number, color: string) : number => gfx.symbols.pixelColor(renderer, x, y, Number(color));
-
 
 const IMG_Init = (flags: number) : number => image.symbols.IMG_Init(flags);
 const IMG_Quit = () : void => image.symbols.IMG_Quit();
@@ -786,6 +781,9 @@ class SlipherEvent {
 
 class SlipherGraphics {
 
+    private static fontPath =  "./font/arial.ttf";
+    private static fontSize = 14;
+
     /**
      * Creates a new drawable from the path given
      * 
@@ -857,13 +855,12 @@ class SlipherGraphics {
      * @param blue 0 - 255
      * @param alpha 0 - 1
      */
-    static rectangle(mode: 'fill' | 'line', x: number, y: number, width: number, height: number, red: number, green: number, blue: number) : void {
+    static rectangle(mode: 'fill' | 'line', x: number, y: number, width: number, height: number) : void {
         const rect = new Uint32Array(4);
         rect[0] = x;
         rect[1] = y;
         rect[2] = width;
         rect[3] = height;
-        SDL_SetRenderDrawColor(Slipher.rendererPointer, red, green, blue, 1);
         if (mode == 'fill') {
             SDL_RenderFillRect(Slipher.rendererPointer, ptr(rect));
         } else if (mode == 'line') {
@@ -922,7 +919,7 @@ class SlipherGraphics {
         return new Animation(animation_frames, animation_frame_data);
     }
 
-    static print(text: string, x: number, y: number, color: colors) {
+    static print(text: string, x: number, y: number, color?: colors) {
         let cl: number = 0;
         switch (color) {
             case "WHITE":
@@ -962,7 +959,16 @@ class SlipherGraphics {
         destsrc[2] = w[0];
         destsrc[3] = h[0];
         SDL_RenderCopyEx(Slipher.rendererPointer, tex, null, ptr(destsrc), 0, null, 0);
-        
+    }
+
+    static setFont(path: string) {
+        Slipher.font = TTF_OpenFont(path, this.fontSize);
+        this.fontPath = path;
+    }
+
+    static setFontSize(size: number) {
+        Slipher.font = TTF_OpenFont(this.fontPath, size);
+        this.fontSize = size;
     }
 }
 
@@ -1229,14 +1235,14 @@ export class Slipher {
         if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
             console.error("SDL failed to init")
         };
-        if (IMG_Init(image_type.IMG_INIT_PNG) != 0) {
-            console.error("IMG failed to init")
+        if (IMG_Init(image_type.IMG_INIT_PNG + image_type.IMG_INIT_JPG) == 0) {
+            console.error("IMG failed to init");
         };
         if (TTF_Init() != 0) {
             console.error("TTF failed to init")
         };
         const fontpath = './font/arial.ttf' || import.meta.dir + '/font/arial.ttf';
-        this.font = TTF_OpenFont('./font/arial.ttf', 14);
+        this.font = TTF_OpenFont(fontpath, 14);
         const mode = new Uint32Array(3);
         SDL_GetDesktopDisplayMode(0, mode);
         this.desktopWidth = mode[1];
@@ -1261,9 +1267,9 @@ export class Slipher {
      * @param height Height of window
      * @returns 
      */
-    public static createWindow(width: number, height: number) {
-        this.windowPointer = SDL_CreateWindow("Wave", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+    public static createWindow(width: number, height: number, title: string) {
+        this.windowPointer = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
         this.rendererPointer = SDL_CreateRenderer(this.windowPointer, -1, SDL_RENDERER_PRESENTVSYNC);
-        return new WaveWindow(this.windowPointer, width, height, "Wave");;
+        return new WaveWindow(this.windowPointer, width, height, title);
     }
 }
