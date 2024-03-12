@@ -1,10 +1,9 @@
 import { dlopen, suffix } from 'bun:ffi';
 
-const path = import.meta.dir + `/lib/libSDL2.${suffix}`;
-const imagepath = import.meta.dir + `/lib/libSDL2_image-2.0.0.${suffix}`;
-const gfxpath = import.meta.dir + `/lib/libSDL2_gfx-1.0.0.${suffix}`;
-const ttfpath = import.meta.dir + `/lib/libSDL2_ttf.${suffix}`;
-
+const path = `./lib/libSDL2.${suffix}` || import.meta.dir + `/lib/libSDL2.${suffix}`;
+const imagepath = `./lib/libSDL2_image-2.0.0.${suffix}` || import.meta.dir + `/lib/libSDL2_image-2.0.0.${suffix}`;
+const gfxpath = `./lib/libSDL2_gfx-1.0.0.${suffix}` || import.meta.dir + `/lib/libSDL2_gfx-1.0.0.${suffix}`;
+const ttfpath = `./lib/libSDL2_ttf.${suffix}` || import.meta.dir + `/lib/libSDL2_ttf.${suffix}`;
 
 export const lib = dlopen(path, {
     SDL_Init: {
@@ -177,7 +176,7 @@ export const ttf = dlopen(ttfpath, {
         returns: "pointer"
     },
     TTF_RenderText_Solid: {
-        args: ["pointer", "cstring", "uint32_t"],
+        args: ["pointer", "cstring", "int"],
         returns: "pointer"
     },
     TTF_Init: {

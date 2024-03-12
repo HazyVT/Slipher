@@ -1,4 +1,3 @@
-import { stdout } from 'bun';
 import { existsSync, rmSync, mkdirSync, readdirSync, copyFile, cpSync} from 'node:fs';
 
 const os = process.platform;
@@ -12,6 +11,8 @@ let outdir = "";
 let outassetsdir = "";
 let outlibdir = "";
 let locallibdir = "";
+let outfontdir = "";
+let localfontdir = "";
 if (os == "win32") {
     splitdir = dir.split("\\node_modules");
     console.log(splitdir);
@@ -22,6 +23,9 @@ if (os == "win32") {
     outassetsdir = outdir + "\\assets";
     outlibdir = outdir + "\\lib";
     locallibdir = splitdir[0] + "\\lib";
+    outfontdir = outdir + "\\font";
+    localfontdir = splitdir[0] + "\\font";
+
 
 } else {
     splitdir = dir.split("/node_modules");
@@ -33,6 +37,8 @@ if (os == "win32") {
     outassetsdir = outdir + "/assets";
     outlibdir = outdir + "/lib";
     locallibdir = splitdir[0] + "/lib";
+    outfontdir = outdir + "/font";
+    localfontdir = splitdir[0] + "/font";
 }
 
 
@@ -47,6 +53,11 @@ console.log('\x1b[35m%s\x1b[0m', 'Creating new assets directory');
 mkdirSync(outassetsdir, {recursive: true});
 console.log('\x1b[35m%s\x1b[0m', 'Creating new lib directory')
 mkdirSync(outlibdir, {recursive: true});
+
+console.log('\x1b[35m%s\x1b[0m', 'Creating new font directory')
+cpSync(localfontdir, outfontdir, {recursive: true});
+
+
 
 readdirSync(locallibdir).forEach(async (file) => {
     let regex = /^$/;

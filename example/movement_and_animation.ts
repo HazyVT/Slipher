@@ -1,4 +1,5 @@
 import { Slipher, Animation, Drawable } from '../index';
+import { readdirSync } from 'node:fs';
 
 let x = 380, y = 387;
 let velocity = {x: 0, y: 0};
@@ -10,14 +11,14 @@ let npcstate = false;
 let action = 'idle';
 const string = "So what exactly are you doing in my house?";
 
-
-
 let idleAnim: Animation;
 let walkAnim: Animation;
 let npcwaitAnim: Animation;
 let npctalkAnim: Animation;
 
 let room: Drawable;
+
+console.log(import.meta.dir);
 
 const change_action = (action: string, new_action: string) => {
     if (action != new_action) {
@@ -31,7 +32,7 @@ const draw_text = () => {
         time += 0.2;
     }
     Slipher.graphics.rectangle('fill', 420, 260, 440, 60, 255,255,255);
-    Slipher.graphics.print(string.substring(0, Math.floor(time)), 440, 270);
+    Slipher.graphics.print(string.substring(0, Math.floor(time)), 440, 270, "BLACK");
 }
 
 function load() {

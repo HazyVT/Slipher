@@ -1,5 +1,5 @@
 import { gfx, image, lib, ttf } from "./sdl2";
-import { type Pointer, ptr} from 'bun:ffi';
+import { type Pointer, ptr, FFIType, type FFITypeOrString} from 'bun:ffi';
 
 /* SDL Constants */
 const SDL_INIT_TIMER           = 0x00000001;
@@ -106,7 +106,7 @@ const SDL_initFramerate = (manager: Uint32Array) : void => gfx.symbols.SDL_initF
 const SDL_setFramerate = (manager: Uint32Array, rate: number) : number => gfx.symbols.SDL_setFramerate(ptr(manager), rate);
 
 const TTF_OpenFont = (path: string, ptsize: number) : TTF_Font => ttf.symbols.TTF_OpenFont(Buffer.from(path + "\x00"), ptsize);
-const TTF_RenderText_Solid = (font: TTF_Font, text: string, color: Uint32Array) : SDL_Surface => ttf.symbols.TTF_RenderText_Solid(font, Buffer.from(text + "\x00"), color);
+const TTF_RenderText_Solid = (font: TTF_Font, text: string, color: number) : SDL_Surface => ttf.symbols.TTF_RenderText_Solid(font, Buffer.from(text + "\x00"), color);
 const TTF_Init = () : number => ttf.symbols.TTF_Init();
 const TTF_SizeText = (font: TTF_Font, text: string, width: Uint32Array, height: Uint32Array) : number => ttf.symbols.TTF_SizeText(font, Buffer.from(text + "\x00"), ptr(width), ptr(height));
 
@@ -356,6 +356,17 @@ type keys =
   | "EJECT"
   | "SLEEP";
 
+type colors =
+  | "WHITE"
+  | "BLACK"
+  | "RED"
+  | "BLUE"
+  | "GREEN"
+  | "MAGENTA"
+  | "BROWN"
+  | "YELLOW"
+  | "PURPLE";
+
 const keyMap = new Map([
   ["UNKNOWN", 0],
   ["BACKSPACE", 8],
@@ -594,6 +605,15 @@ const keyMap = new Map([
   ["EJECT", 1073742105],
   ["SLEEP", 1073742106],
 ]);
+
+const generateHexValue = (num: number) => {
+    let hexString = num.toString(16);
+    if (hexString.length < 2) {
+        hexString = "0" + hexString;
+    }
+
+    return hexString;
+}
 
 type mouse = 'MOUSELEFT' | 'MOUSERIGHT' | 'MOUSEMIDDLE';
 
@@ -902,13 +922,36 @@ class SlipherGraphics {
         return new Animation(animation_frames, animation_frame_data);
     }
 
-    static print(text: string, x: number, y: number) {
-        const color = new Uint32Array(4);
-        color[0] = 255;
-        color[1] = 0;
-        color[2] = 0;
-        color[3] = 1;
-        const surf  = TTF_RenderText_Solid(Slipher.font, text, color);
+    static print(text: string, x: number, y: number, color: colors) {
+        let cl: number = 0;
+        switch (color) {
+            case "WHITE":
+                cl = 0xFFFFFF;
+                break;
+            case "RED":
+                cl = 0x800000;
+                break;
+            case "MAGENTA":
+                cl = 0xFF00FF;
+                break;
+            case "BLUE":
+                cl = 0xFF0000;
+                break;
+            case "GREEN":
+                cl = 0xFFFF00;
+                break;
+            case "YELLOW":
+                cl = 0x00FFFF;
+                break;
+            case "BROWN":
+                cl = 0xFF6600;
+                break;
+            case "PURPLE":
+                cl = 0x800080;
+                break;
+
+        }
+        const surf  = TTF_RenderText_Solid(Slipher.font, text, cl);
         const tex = SDL_CreateTextureFromSurface(Slipher.rendererPointer, surf);
         const w = new Uint32Array(1);
         const h = new Uint32Array(1);
@@ -1192,7 +1235,8 @@ export class Slipher {
         if (TTF_Init() != 0) {
             console.error("TTF failed to init")
         };
-        this.font = TTF_OpenFont(import.meta.dir + '/font/arial.ttf', 14);
+        const fontpath = './font/arial.ttf' || import.meta.dir + '/font/arial.ttf';
+        this.font = TTF_OpenFont('./font/arial.ttf', 14);
         const mode = new Uint32Array(3);
         SDL_GetDesktopDisplayMode(0, mode);
         this.desktopWidth = mode[1];
