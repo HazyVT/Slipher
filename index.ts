@@ -2,17 +2,7 @@ import { gfx, image, lib, ttf } from "./sdl2";
 import { type Pointer, ptr, FFIType, type FFITypeOrString} from 'bun:ffi';
 
 /* SDL Constants */
-const SDL_INIT_TIMER           = 0x00000001;
-const SDL_INIT_AUDIO           = 0x00000010;
-const SDL_INIT_VIDEO           = 0x00000020;
-const SDL_INIT_JOYSTICK        = 0x00000200;
-const SDL_INIT_HAPTIC          = 0x00001000;
-const SDL_INIT_GAMECONTROLLER  = 0x00002000;
-const SDL_INIT_NOPARACHUTE     = 0x00100000;
 const SDL_INIT_EVERYTHING      = 0x0000FFFF;
-const SDL_HINT_DEFAULT = 1;
-const SDL_HINT_NORMAL = 2;
-const SDL_HINT_OVERRIDE = 3;
 const SDL_WINDOW_FULLSCREEN = 0x00000001;
 const SDL_WINDOW_OPENGL = 0x00000002;
 const SDL_WINDOW_SHOWN = 0x00000004;
@@ -99,6 +89,10 @@ const SDL_SetWindowPosition = (window: SDL_Window, x: number, y: number) : void 
 const SDL_GetDesktopDisplayMode = (index: number, mode: Uint32Array) : number => lib.symbols.SDL_GetDesktopDisplayMode(index, ptr(mode));
 const SDL_Delay = (ms: number) : void => lib.symbols.SDL_Delay(ms);
 const SDL_GetTicks = () : number => lib.symbols.SDL_GetTicks();
+const SDL_HideWindow = (window: SDL_Window) : void => lib.symbols.SDL_HideWindow(window);
+const SDL_ShowWindow = (window: SDL_Window) : void => lib.symbols.SDL_ShowWindow(window);
+const SDL_MaximizeWindow = (window: SDL_Window) : void => lib.symbols.SDL_MaximizeWindow(window);
+const SDL_MinimizeWindow = (window: SDL_Window) : void => lib.symbols.SDL_MinimizeWindow(window);
 
 const SDL_getFramerate = (manager: Uint32Array) : number => gfx.symbols.SDL_getFramerate(ptr(manager));
 const SDL_initFramerate = (manager: Uint32Array) : void => gfx.symbols.SDL_initFramerate(ptr(manager));
@@ -972,14 +966,17 @@ class SlipherGraphics {
     }
 }
 
-class WaveWindow {
+class SlipherWindow {
     private pointer: SDL_Window;
     private width: number;
     private height: number;
     private title: string;
-    private fullscreen = false;
     private manager = new Uint32Array(6);
     private framerate = 60;
+
+    private fullscreen = false;
+    private hidden = false;
+    private maximized = false;
 
     constructor(pointer : SDL_Window, width: number, height: number, title: string) {
         this.pointer = pointer;
@@ -1051,6 +1048,31 @@ class WaveWindow {
 
     getFullscreen() {
         return this.fullscreen;
+    }
+
+    setHidden(flag: boolean) {
+        switch (flag) {
+            case true:
+                SDL_HideWindow(Slipher.windowPointer);
+                break;
+            case false:
+                SDL_ShowWindow(Slipher.windowPointer);
+                break;
+        }
+
+        this.hidden = flag;
+    }
+
+    getHidden() {
+        return this.hidden;
+    }
+
+    setMaximized() {
+        SDL_MaximizeWindow(Slipher.windowPointer);
+    }
+
+    setMinimized() {
+        SDL_MinimizeWindow(Slipher.windowPointer);
     }
 
     capFrameRate(tick: number) {
@@ -1270,6 +1292,6 @@ export class Slipher {
     public static createWindow(width: number, height: number, title: string) {
         this.windowPointer = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
         this.rendererPointer = SDL_CreateRenderer(this.windowPointer, -1, SDL_RENDERER_PRESENTVSYNC);
-        return new WaveWindow(this.windowPointer, width, height, title);
+        return new SlipherWindow(this.windowPointer, width, height, title);
     }
 }

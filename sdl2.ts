@@ -125,7 +125,24 @@ export const lib = dlopen(path, {
     SDL_GetTicks: {
         args: [],
         returns: "uint32_t"
+    },
+    SDL_HideWindow: {
+        args: ["pointer"],
+        returns: "void"
+    },
+    SDL_ShowWindow: {
+        args: ["pointer"],
+        returns: "void"
+    },
+    SDL_MaximizeWindow: {
+        args: ["pointer"],
+        returns: "void"
+    },
+    SDL_MinimizeWindow: {
+        args: ["pointer"],
+        returns: "void"
     }
+
 })
 
 export const image = dlopen(imagepath, {
