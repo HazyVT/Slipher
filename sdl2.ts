@@ -1,9 +1,21 @@
 import { dlopen, suffix } from 'bun:ffi';
 
-const path = `./lib/libSDL2.${suffix}` || import.meta.dir + `/lib/libSDL2.${suffix}`;
-const imagepath = `./lib/libSDL2_image-2.0.0.${suffix}` || import.meta.dir + `/lib/libSDL2_image-2.0.0.${suffix}`;
-const gfxpath = `./lib/libSDL2_gfx-1.0.0.${suffix}` || import.meta.dir + `/lib/libSDL2_gfx-1.0.0.${suffix}`;
-const ttfpath = `./lib/libSDL2_ttf.${suffix}` || import.meta.dir + `/lib/libSDL2_ttf.${suffix}`;
+let path = '';
+let imagepath = '';
+let gfxpath = '';
+let ttfpath = '';
+
+if (import.meta.dir == "B:\\~BUN\\root") {
+    path = `./lib/libSDL2.${suffix}`
+    imagepath = `./lib/libSDL2_image-2.0.0.${suffix}`
+    gfxpath = `./lib/libSDL2_gfx-1.0.0.${suffix}`
+    ttfpath = `./lib/libSDL2_ttf.${suffix}`
+} else {
+    path = import.meta.dir + `/lib/libSDL2.${suffix}`;
+    imagepath = import.meta.dir + `/lib/libSDL2_image-2.0.0.${suffix}`;
+    gfxpath = import.meta.dir + `/lib/libSDL2_gfx-1.0.0.${suffix}`;
+    ttfpath = import.meta.dir + `/lib/libSDL2_ttf.${suffix}`;
+} 
 
 export const lib = dlopen(path, {
     SDL_Init: {
